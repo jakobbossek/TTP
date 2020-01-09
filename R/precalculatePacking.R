@@ -4,7 +4,7 @@ precalculatePackings = function(pathToInstance, p, times) {
   times = checkmate::asInt(times, lower = 2)
 
   # qucik and dirty
-  itemline = readLines(instance, 4)[4L]
+  itemline = readLines(pathToInstance, 4)[4L]
   k = as.integer(strsplit(itemline, split = "[[:space:]]*:[[:space:]]*")[[1]][2])
 
   packings = vector(mode = "list", length = times)
