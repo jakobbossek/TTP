@@ -1,0 +1,26 @@
+Package: TTP
+Title: Dynamic TTP study code
+Description: Wrapper for constraint TTP / node weighted TSP study.
+Version: 1.0.0
+Encoding: UTF-8
+Date: 2017-12-21
+Authors@R: c(person("Jakob", "Bossek", email = "j.bossek@gmail.com", role = c("aut", "cre")))
+Maintainer: Jakob Bossek <j.bossek@gmail.com>
+License: BSD_2_clause + file LICENSE
+URL: https://github.com/jakobbossek/TTP
+BugReports: https://github.com/jakobbossek/TTP/issues
+Depends:
+    BBmisc (>= 1.6)
+Imports:
+    methods,
+    Rcpp (>= 0.12.16),
+    checkmate (>= 1.1)
+Suggests:
+    testthat (>= 0.9.1),
+    knitr,
+    rmarkdown
+ByteCompile: yes
+LinkingTo: Rcpp
+LazyData: yes
+RoxygenNote: 6.1.1
+VignetteBuilder: knitr
