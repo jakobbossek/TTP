@@ -354,7 +354,7 @@ public:
     unsigned int iteration = 0;
     unsigned int evaluations = mu;
 
-    std::vector<double> trajectory(maxEvaluations - mu);
+    std::vector<double> trajectory(maxEvaluations);
 
     while (evaluations < maxEvaluations) {
       // sample random individual from population
@@ -474,6 +474,15 @@ public:
       population.pop_back();
 
       // log progress
+      // for (mu + 1) the first lambda evaluations are simply the best out of mu
+      double incumbantValue = population[0].getValue();
+      if (iteration == 0) {
+        for (int i = 0; i < mu; ++i) {
+          trajectory[i] = incumbantValue;
+        }
+      } else {
+        trajectory[evaluations] = incumbantValue;
+      }
       trajectory[iteration] = population[0].getValue();
       if ((iteration >= 1) && (trajectory[iteration] < trajectory[iteration - 1])) {
         printf("New best value at iteration %d is %.2f\n", iteration, trajectory[iteration]);
