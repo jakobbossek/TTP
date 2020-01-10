@@ -17,6 +17,9 @@
 #'   In this case we have \code{max.evals = tau}.
 #' @param n.changes [\code{integer(1)}]\cr
 #'   Number of dynamic changes.
+#' @param start.from.scratch [\logical(1)]\cr
+#'   Start with random population each time a dynamic change occurs?
+#'   Default is \code{FALSE}.
 #' @param full [\code{logical(1)}]\cr
 #'   If \code{TRUE} a list of length \code{n.changes + 1} is returned with components
 #'   \dQuote{tour}, \dQuote{tour.length}, \dQuote{toursFinal} and \dQuote{trajectory}.
@@ -30,6 +33,7 @@ runWTSPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
   max.evals.initial,
   max.evals = NULL,
   n.changes = 3L,
+  start.from.scratch = FALSE,
   full = FALSE) {
   checkmate::assertFileExists(pathToInstance)
   checkmate::assertFileExists(pathToPackings)
@@ -39,6 +43,7 @@ runWTSPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
   max.evals.initial = checkmate::asInt(max.evals.initial)
   checkmate::assertInt(max.evals, null.ok = TRUE)
   checkmate::assertInt(n.changes, lower = 1L)
+  checkmate::assertFlag(start.from.scratch)
   checkmate::assertFlag(full)
 
   # inport
@@ -60,7 +65,8 @@ runWTSPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
     }
     BBmisc::catf("Run %i", r - 1L)
     res.run = runWTSPSolver(pathToInstance, packing = packings[r, ],
-      tours = init.tours, mu = mu, mutation = mutation,
+      tours = if (!start.from.scratch) init.tours else NULL,
+      mu = mu, mutation = mutation,
       max.evals = max.evals)
     init.tours = res.run$finalTours
     if (!full) {
