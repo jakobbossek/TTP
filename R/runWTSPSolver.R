@@ -20,7 +20,14 @@
 #'   Maximum number of function evaluations.
 #' @return [\code{list}]
 #' @export
-runTTPSolver = function(instance, packing, tours = NULL, mu = 1L, mutation = "swap", max.evals) {
+runWTSPSolver = function(instance, packing, tours = NULL, mu = 1L, mutation = "swap", max.evals) {
+  checkmate::assertFileExists(instance)
+  checkmate::assertInteger(packing, lower = 0, upper = 1, any.missing = FALSE, all.missing = FALSE)
+  checkmate::assertMatrix(tours, nrows = mu, null.ok = TRUE)
+  mu = checkmate::asInt(mu)
+  checkmate::assertChoice(mutation, choices = c("swap", "inversion", "jump", "scramble"))
+  max.evals = checkmate::asInt(max.evals)
+
   dimline = readLines(instance, 3)[3L]
   n = as.integer(strsplit(dimline, split = "[[:space:]]*:[[:space:]]*")[[1]][2])
 
@@ -29,11 +36,11 @@ runTTPSolver = function(instance, packing, tours = NULL, mu = 1L, mutation = "sw
 
   if (is.null(tours)) {
     tours = lapply(seq_len(mu), function(i) {
-      sample(1:n) - 1L # 0-based in c++
+      sample(1:n)
     })
     tours = do.call(rbind, tours)
   }
 
   # delegate to c++
-  runTTPSolverC(instance, packing, tours, mu, mutation, max.evals)
+  runWTSPSolverC(instance, packing, tours, mu, mutation, max.evals)
 }

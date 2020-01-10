@@ -5,7 +5,7 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-List runTTPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int maxEvaluations) {
+List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int maxEvaluations) {
   TTPInstance instance(pathToFile);
 
   // Now perform hill-climbing

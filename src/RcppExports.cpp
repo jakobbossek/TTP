@@ -5,9 +5,9 @@
 
 using namespace Rcpp;
 
-// runTTPSolverC
-List runTTPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int maxEvaluations);
-RcppExport SEXP _TTP_runTTPSolverC(SEXP pathToFileSEXP, SEXP packingSEXP, SEXP initToursSEXP, SEXP muSEXP, SEXP mutationSEXP, SEXP maxEvaluationsSEXP) {
+// runWTSPSolverC
+List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int maxEvaluations);
+RcppExport SEXP _TTP_runWTSPSolverC(SEXP pathToFileSEXP, SEXP packingSEXP, SEXP initToursSEXP, SEXP muSEXP, SEXP mutationSEXP, SEXP maxEvaluationsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -17,13 +17,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type mu(muSEXP);
     Rcpp::traits::input_parameter< int >::type mutation(mutationSEXP);
     Rcpp::traits::input_parameter< int >::type maxEvaluations(maxEvaluationsSEXP);
-    rcpp_result_gen = Rcpp::wrap(runTTPSolverC(pathToFile, packing, initTours, mu, mutation, maxEvaluations));
+    rcpp_result_gen = Rcpp::wrap(runWTSPSolverC(pathToFile, packing, initTours, mu, mutation, maxEvaluations));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_TTP_runTTPSolverC", (DL_FUNC) &_TTP_runTTPSolverC, 6},
+    {"_TTP_runWTSPSolverC", (DL_FUNC) &_TTP_runWTSPSolverC, 6},
     {NULL, NULL, 0}
 };
 

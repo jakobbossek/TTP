@@ -1,11 +1,11 @@
-#' @title Wrapper for runTTPSolver taking care of dynamic changes.
+#' @title Wrapper for runWTSPSolver taking care of dynamic changes.
 #'
 #' @param pathToInstance [\code{character(1)}]\cr
 #'   Path to instance.
 #' @param pathToPackings [\code{character(1)}]\cr
 #'   Path to file with row-wise binary packing vector.
 #' @param mutation [\code{character(1)}]\cr
-#'   See \code{\link{runTTPSolver}}.
+#'   See \code{\link{runWTSPSolver}}.
 #' @param mu [\code{integer(1)}]\cr
 #'   Population size.
 #' @param tau [\code{integer(1)}]\cr
@@ -23,13 +23,23 @@
 #'   If \code{FALSE} - the default - only a length-\code{n.changes + 1} numeric vector
 #'   of tour length is returned.
 #' @return [\code{list} | \code{numeric}] See \code{full} for details
-runTTPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
+#' @export
+runWTSPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
   mutation, mu,
   tau,
   max.evals.initial,
   max.evals = NULL,
   n.changes = 3L,
   full = FALSE) {
+  checkmate::assertFileExists(pathToInstance)
+  checkmate::assertFileExists(pathToPackings)
+  checkmate::assertChoice(mutation, choices = c("swap", "inversion", "jump", "scramble"))
+  mu = checkmate::asInt(mu)
+  tau = checkmate::asInt(tau)
+  max.evals.initial = checkmate::asInt(max.evals.initial)
+  checkmate::assertInt(max.evals, null.ok = TRUE)
+  checkmate::assertInt(n.changes, lower = 1L)
+  checkmate::assertFlag(full)
 
   # inport
   n.runs = n.changes + 1L # plus initial run
@@ -49,7 +59,7 @@ runTTPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
       max.evals = if (r == 1L) max.evals.initial else tau
     }
     BBmisc::catf("Run %i", r - 1L)
-    res.run = runTTPSolver(pathToInstance, packing = packings[r, ],
+    res.run = runWTSPSolver(pathToInstance, packing = packings[r, ],
       tours = init.tours, mu = mu, mutation = mutation,
       max.evals = max.evals)
     init.tours = res.run$finalTours

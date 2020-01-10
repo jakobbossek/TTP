@@ -156,7 +156,6 @@ public:
     while (i <= this->numberOfNodes) {
       i += 1;
       infile >> index >> xpos >> ypos;
-      // FIXME: index - 1?
       std::vector<int> node {index, xpos, ypos};
       this->nodes.push_back(node);
     }
@@ -171,16 +170,13 @@ public:
     while (i <= this->numberOfItems) {
       i += 1;
       infile >> itemIndex >> profit >> weight >> nodeNumber;
-      // FIXME: itemIndex - 1?
-      // FIXME: Storing a long vector of weights/profits is not so smart.
-      // We watn this->item[nodeNumber].push_pack(item);
-      std::vector<int> item {itemIndex - 1, profit, weight, nodeNumber};
+      std::vector<int> item {itemIndex, profit, weight, nodeNumber};
       this->items.push_back(item);
     }
 
     infile.close();
 
-    //this->print(true);
+    this->print(true);
   }
 
   void print(bool detailed = false) {
@@ -208,23 +204,40 @@ public:
   }
 
   double evaluate(TTPSolution solution, double gamma) {
+    // tour not neccessarily starting with 1 (will be rotated later)
     std::vector<int> tour = solution.getTour();
+
+    // at position i this is already the sum of items weights of node i
     std::vector<int> packing = solution.getPacking();
 
     double length = 0;
     double weightSum = 0;
     unsigned int n = this->numberOfNodes;
 
-    // FIXME:first node by defintion has no items
-    for (int i = 0; i < n - 1; ++i) {
-      weightSum = 0;
-      for (int j = 0; j <= i; ++j) {
-        weightSum += packing[tour[j]];
+    // first node needs to be 1. Find 1
+    std::vector<int> rotatedTour(n);
+    int cityOneIdx = 0;
+    for (int i = 0; i < n; ++i) {
+      if (tour[i] == 1) {
+        cityOneIdx = i;
+        break;
       }
-      //weightSum = pow(weightSum, gamma);
-      length += weightSum * this->getDistance(tour[i], tour[i + 1]);
     }
-    length += weightSum * this->getDistance(tour[n - 1], tour[0]);
+
+    // now rotate
+    for (int i = 0; i < n; ++i) {
+      int idxInTour = (i + cityOneIdx) % n;
+      rotatedTour[i] = tour[idxInTour];
+    }
+
+    // now calculate tour
+    for (int i = 0; i < n - 1; ++i) {
+      weightSum += packing[rotatedTour[i] - 1];
+      length += weightSum * this->getDistance(rotatedTour[i], rotatedTour[i + 1]);
+    }
+    weightSum += packing[rotatedTour[n - 1] - 1];
+    length += weightSum * this->getDistance(rotatedTour[n - 1], rotatedTour[0]);
+
     solution.setValue(length);
     return(length);
   }
@@ -246,37 +259,37 @@ public:
   }
 
   double getDistance(int i, int j) {
-    std::vector<int> x = this->nodes[i];
-    std::vector<int> y = this->nodes[j];
+    std::vector<int> x = this->nodes[i - 1];
+    std::vector<int> y = this->nodes[j - 1];
     double x1 = x[1], x2= x[2], y1 = y[1], y2 = y[2];
     double d = sqrt((x1 - y1) * (x1 - y1) + (x2 - y2) * (x2 - y2));
     return(d);
   }
 
-  void precalculatePacking(const double p, const int times, std::string filename) {
-    // Bernoulli sampler
-    std::default_random_engine generator;
-    std::bernoulli_distribution bernoulliExperiment(p);
+  // void precalculatePacking(const double p, const int times, std::string filename) {
+  //   // Bernoulli sampler
+  //   std::default_random_engine generator;
+  //   std::bernoulli_distribution bernoulliExperiment(p);
 
-    // output file
-    std::ofstream output;
-    output.open(filename, std::ios::out);
+  //   // output file
+  //   std::ofstream output;
+  //   output.open(filename, std::ios::out);
 
-    // generate packings and store to file
-    for (int i = 0; i < times; ++i) {
-      for (int j = 0; j < this->numberOfItems; ++j) {
-        output << bernoulliExperiment(generator);
-        if (j < this->numberOfItems - 1) {
-          output << " ";
-        } else {
-          output << "\n";
-        }
-      }
-    }
+  //   // generate packings and store to file
+  //   for (int i = 0; i < times; ++i) {
+  //     for (int j = 0; j < this->numberOfItems; ++j) {
+  //       output << bernoulliExperiment(generator);
+  //       if (j < this->numberOfItems - 1) {
+  //         output << " ";
+  //       } else {
+  //         output << "\n";
+  //       }
+  //     }
+  //   }
 
-    // cleanup
-    output.close();
-  }
+  //   // cleanup
+  //   output.close();
+  // }
 
 private:
   std::string problemName;
@@ -316,9 +329,11 @@ public:
     for (int i = 0; i < packingByNode.size(); ++i) {
       packingByNode[i] = 0;
     }
+    // first item has weight 1
+    packingByNode[0] = 1;
     for (int i = 0; i < packing.size(); ++i) {
       if (packing[i] == 1) {
-        packingByNode[items[i][3]] += items[i][2];
+        packingByNode[items[i][3] - 1] += items[i][2];
       }
     }
 
@@ -484,8 +499,9 @@ public:
 
   static std::vector<int> generateRandomPermutation(int n) {
     std::vector<int> tour(n);
+    // tours are permutations of {1, ..., n}
     for (int i = 0; i < n - 1; ++i) {
-      tour[i] = i;
+      tour[i] = i + 1;
     }
     std::random_shuffle(tour.begin(), tour.end());
     return(tour);
