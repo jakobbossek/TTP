@@ -8,6 +8,12 @@
 #'   See \code{\link{runWTSPSolver}}.
 #' @param mu [\code{integer(1)}]\cr
 #'   Population size.
+#' @param survival.strategy [\code{character(1)}]\cr
+#'   How to perform survival selection. Option \dQuote{classic} drops the
+#'   worst out of \eqn{\mu + 1} individuals while option \dQuote{parent} compares
+#'   the fitness of the child with its parent fitness only.
+#'   Note that for \code{mu = 1} both strategies behave in the same way.
+#'   Default is \code{classic}.
 #' @param tau [\code{integer(1)}]\cr
 #'   Dynamic change in packing is triggered every \code{tau} function evaluations.
 #' @param max.evals.initial [\code{integer(1)}]\cr
@@ -17,7 +23,7 @@
 #'   In this case we have \code{max.evals = tau}.
 #' @param n.changes [\code{integer(1)}]\cr
 #'   Number of dynamic changes.
-#' @param start.from.scratch [\logical(1)]\cr
+#' @param start.from.scratch [\code{logical(1)}]\cr
 #'   Start with random population each time a dynamic change occurs?
 #'   Default is \code{FALSE}.
 #' @param full [\code{logical(1)}]\cr
@@ -27,8 +33,9 @@
 #'   of tour length is returned.
 #' @return [\code{list} | \code{numeric}] See \code{full} for details
 #' @export
-runWTSPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
-  mutation, mu,
+runWTSPSolverInDynamicSetting = function(
+  pathToInstance, pathToPackings,
+  mutation, mu, survival.strategy,
   tau,
   max.evals.initial,
   max.evals = NULL,
@@ -38,6 +45,7 @@ runWTSPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
   checkmate::assertFileExists(pathToInstance)
   checkmate::assertFileExists(pathToPackings)
   checkmate::assertChoice(mutation, choices = c("swap", "inversion", "jump", "scramble"))
+  checkmate::assertChoice(survival.strategy, choices = c("classic", "parent"))
   mu = checkmate::asInt(mu)
   tau = checkmate::asInt(tau)
   max.evals.initial = checkmate::asInt(max.evals.initial)
@@ -66,7 +74,7 @@ runWTSPSolverInDynamicSetting = function(pathToInstance, pathToPackings,
     BBmisc::catf("Run %i", r - 1L)
     res.run = runWTSPSolver(pathToInstance, packing = packings[r, ],
       tours = if (!start.from.scratch) init.tours else NULL,
-      mu = mu, mutation = mutation,
+      mu = mu, mutation = mutation, survival.strategy = survival.strategy,
       max.evals = max.evals)
     init.tours = res.run$finalTours
     if (!full) {

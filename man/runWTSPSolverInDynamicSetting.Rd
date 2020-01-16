@@ -5,8 +5,8 @@
 \title{Wrapper for runWTSPSolver taking care of dynamic changes.}
 \usage{
 runWTSPSolverInDynamicSetting(pathToInstance, pathToPackings, mutation, mu,
-  tau, max.evals.initial, max.evals = NULL, n.changes = 3L,
-  full = FALSE)
+  survival.strategy, tau, max.evals.initial, max.evals = NULL,
+  n.changes = 3L, start.from.scratch = FALSE, full = FALSE)
 }
 \arguments{
 \item{pathToInstance}{[\code{character(1)}]\cr
@@ -21,6 +21,13 @@ See \code{\link{runWTSPSolver}}.}
 \item{mu}{[\code{integer(1)}]\cr
 Population size.}
 
+\item{survival.strategy}{[\code{character(1)}]\cr
+How to perform survival selection. Option \dQuote{classic} drops the
+worst out of \eqn{\mu + 1} individuals while option \dQuote{parent} compares
+the fitness of the child with its parent fitness only.
+Note that for \code{mu = 1} both strategies behave in the same way.
+Default is \code{classic}.}
+
 \item{tau}{[\code{integer(1)}]\cr
 Dynamic change in packing is triggered every \code{tau} function evaluations.}
 
@@ -33,6 +40,10 @@ In this case we have \code{max.evals = tau}.}
 
 \item{n.changes}{[\code{integer(1)}]\cr
 Number of dynamic changes.}
+
+\item{start.from.scratch}{[\code{logical(1)}]\cr
+Start with random population each time a dynamic change occurs?
+Default is \code{FALSE}.}
 
 \item{full}{[\code{logical(1)}]\cr
 If \code{TRUE} a list of length \code{n.changes + 1} is returned with components

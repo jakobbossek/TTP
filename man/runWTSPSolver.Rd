@@ -5,7 +5,7 @@
 \title{Run weighted TSP solver.}
 \usage{
 runWTSPSolver(instance, packing, tours = NULL, mu = 1L,
-  mutation = "swap", max.evals)
+  mutation = "swap", survival.strategy = "classic", max.evals)
 }
 \arguments{
 \item{instance}{[\code{character(1)}]\cr
@@ -24,6 +24,13 @@ Population size.}
 
 \item{mutation}{[\code{character(1)}]\cr
 One of \dQuote{swap}, \dQuote{jump}, \dQuote{inversion} or \dQuote{scramble}.}
+
+\item{survival.strategy}{[\code{character(1)}]\cr
+How to perform survival selection. Option \dQuote{classic} drops the
+worst out of \eqn{\mu + 1} individuals while option \dQuote{parent} compares
+the fitness of the child with its parent fitness only.
+Note that for \code{mu = 1} both strategies behave in the same way.
+Default is \code{classic}.}
 
 \item{max.evals}{[\code{integer}]\cr
 Maximum number of function evaluations.}

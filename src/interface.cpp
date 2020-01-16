@@ -5,7 +5,7 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int maxEvaluations) {
+List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int survivalStrategy, int maxEvaluations) {
   TTPInstance instance(pathToFile);
 
   // Now perform hill-climbing
@@ -22,9 +22,9 @@ List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix init
     std::vector<int> tour(n);
     for (int j = 0; j < n; ++j) {
       tour[j] = initTours(i, j);
-      std::cout << tour[j] << ", ";
+      //std::cout << tour[j] << ", ";
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
     toursC[i] = tour;
   }
 
@@ -37,6 +37,7 @@ List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix init
     mu,
     lambda,
     mutation,
+    survivalStrategy,
     maxEvaluations,
     gamma);
 

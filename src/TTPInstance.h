@@ -176,7 +176,7 @@ public:
 
     infile.close();
 
-    this->print(true);
+    //this->print(true);
   }
 
   void print(bool detailed = false) {
@@ -314,6 +314,7 @@ public:
     int mu,
     int lambda,
     int mutation,
+    int survivalStrategy, // 0 = best of (mu + 1), 1 = keep best of parent and child
     int maxEvaluations,
     double gamma
     ) {
@@ -358,8 +359,8 @@ public:
 
     while (evaluations < maxEvaluations) {
       // sample random individual from population
-      int k = Unif(rndgenerator);
-      std::vector<int> child = population[k].getTour();
+      int parentId = Unif(rndgenerator);
+      std::vector<int> child = population[parentId].getTour();
 
       // now perform mutation
       if (mutation == 0) {
@@ -464,14 +465,29 @@ public:
       TTPSolution childSolution(child, packingByNode);
       double childLength = instance.evaluate(childSolution, gamma);
       childSolution.setValue(childLength);
-      population.push_back(childSolution);
 
-      sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
-        return s1.getValue() < s2.getValue();
-      });
+      // decide which survival strategy to perform
+      if (survivalStrategy == 0) {
+        // Do classical select mu from (mu+1) strategy
+        population.push_back(childSolution);
 
-      // delete last, i.e. worst, element
-      population.pop_back();
+        sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
+          return s1.getValue() < s2.getValue();
+        });
+
+        // delete last, i.e. worst, element
+        population.pop_back();
+      } else if (survivalStrategy == 1) {
+        // Compare with parent only
+        double parentLength = population[parentId].getValue();
+        if (childLength <= parentLength) {
+          population[parentId] = childSolution;
+        }
+
+        sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
+          return s1.getValue() < s2.getValue();
+        });
+      }
 
       // log progress
       // for (mu + 1) the first lambda evaluations are simply the best out of mu
@@ -488,7 +504,6 @@ public:
         printf("New best value at iteration %d is %.2f\n", iteration, trajectory[iteration]);
       }
 
-      // FIXME: this is the same at the moment
       ++iteration;
       ++evaluations;
     } // maxEvaluations
