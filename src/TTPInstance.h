@@ -14,7 +14,7 @@
 
 class TTPSolution {
 public:
-  TTPSolution(std::vector<int> tour, std::vector<int> packing) {
+  TTPSolution(std::vector<int> tour, std::vector<double> packing) {
     this->tour = tour;
     this->packing = packing;
     this->value = INFINITY;
@@ -32,7 +32,7 @@ public:
     return(this->tour);
   }
 
-  std::vector<int> getPacking() {
+  std::vector<double> getPacking() {
     return(this->packing);
   }
 
@@ -51,7 +51,7 @@ public:
 private:
   double value;
   std::vector<int> tour;
-  std::vector<int> packing;
+  std::vector<double> packing;
 };
 
 class TTPAlgorithmOutput {
@@ -165,12 +165,15 @@ public:
     std::getline(infile, line);
 
     // Now for the items
-    int itemIndex, profit, weight, nodeNumber;
+    int itemIndex, nodeNumber;
+    double profit, weight;
     i = 1;
     while (i <= this->numberOfItems) {
       i += 1;
       infile >> itemIndex >> profit >> weight >> nodeNumber;
-      std::vector<int> item {itemIndex, profit, weight, nodeNumber};
+      std::vector<int> itemPart1 {itemIndex, nodeNumber};
+      std::vector<double> itemPart2 {profit, weight};
+      std::pair<std::vector<int>, std::vector<double>> item = {itemPart1, itemPart2};
       this->items.push_back(item);
     }
 
@@ -197,8 +200,8 @@ public:
       printf("\nITEMS (first %i)\n", toShow);
       //toShow = this->numberOfItems;
       for (int i = 0; i < toShow; ++i) {
-        std::vector<int> item = this->items[i];
-        printf("(index=%d, p=%d, w=%d, node=%d)\n", item[0], item[1], item[2], item[3]);
+        std::pair<std::vector<int>, std::vector<double>> item= this->items[i];
+        printf("(index=%d, p=%2.f, w=%.2f, node=%d)\n", item.first[0], item.second[0], item.second[1], item.first[1]);
       }
     } // if (detailed)
   }
@@ -208,7 +211,7 @@ public:
     std::vector<int> tour = solution.getTour();
 
     // at position i this is already the sum of items weights of node i
-    std::vector<int> packing = solution.getPacking();
+    std::vector<double> packing = solution.getPacking();
 
     double length = 0;
     double weightSum = 0;
@@ -254,7 +257,7 @@ public:
     return(this->problemName);
   }
 
-  std::vector<std::vector<int>> getItems() {
+  std::vector<std::pair<std::vector<int>, std::vector<double>>> getItems() {
     return(this->items);
   }
 
@@ -302,7 +305,7 @@ private:
   double maxSpeed;
   double rentingRatio;
   std::vector<std::vector<int>> nodes;
-  std::vector<std::vector<int>> items;
+  std::vector<std::pair<std::vector<int>, std::vector<double>>> items;
 };
 
 class TTPAlgorithm {
@@ -323,18 +326,18 @@ public:
 
     // extract some vars
     int n = instance.getNumberOfNodes();
-    std::vector<std::vector<int>> items = instance.getItems();
+    std::vector<std::pair<std::vector<int>, std::vector<double>>> items = instance.getItems();
 
     // Calculate weight per node
-    std::vector<int> packingByNode(n);
+    std::vector<double> packingByNode(n);
     for (int i = 0; i < packingByNode.size(); ++i) {
-      packingByNode[i] = 0;
+      packingByNode[i] = 0.0;
     }
     // first item has weight 1
-    packingByNode[0] = 1;
+    packingByNode[0] = 1.0;
     for (int i = 0; i < packing.size(); ++i) {
       if (packing[i] == 1) {
-        packingByNode[items[i][3] - 1] += items[i][2];
+        packingByNode[items[i].first[1] - 1] += items[i].second[1];
       }
     }
 

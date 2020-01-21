@@ -4,7 +4,7 @@
 \alias{runWTSPSolver}
 \title{Run weighted TSP solver.}
 \usage{
-runWTSPSolver(instance, packing, tours = NULL, mu = 1L,
+runWTSPSolver(instance, packing = NULL, tours = NULL, mu = 1L,
   mutation = "swap", survival.strategy = "classic", max.evals)
 }
 \arguments{
@@ -12,7 +12,8 @@ runWTSPSolver(instance, packing, tours = NULL, mu = 1L,
 Path to instance.}
 
 \item{packing}{[\code{integer}]\cr
-Binary vector of packed items.}
+Binary vector of packed items.
+If \code{NULL}, all items are packed.}
 
 \item{tours}{[\code{matrix}]\cr
 A \code{mu} times \eqn{n} matrix where \code{mu} is the population size and
