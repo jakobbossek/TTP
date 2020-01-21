@@ -8,6 +8,7 @@
 #'   Path to instance.
 #' @param packing [\code{integer}]\cr
 #'   Binary vector of packed items.
+#'   If \code{NULL}, all items are packed.
 #' @param tours [\code{matrix}]\cr
 #'   A \code{mu} times \eqn{n} matrix where \code{mu} is the population size and
 #'   \code{n} is the number of nodes. Each row is one initial TSP tour.
@@ -26,9 +27,9 @@
 #'   Maximum number of function evaluations.
 #' @return [\code{list}]
 #' @export
-runWTSPSolver = function(instance, packing, tours = NULL, mu = 1L, mutation = "swap", survival.strategy = "classic", max.evals) {
+runWTSPSolver = function(instance, packing = NULL, tours = NULL, mu = 1L, mutation = "swap", survival.strategy = "classic", max.evals) {
   checkmate::assertFileExists(instance)
-  checkmate::assertInteger(packing, lower = 0, upper = 1, any.missing = FALSE, all.missing = FALSE)
+  checkmate::assertInteger(packing, lower = 0, upper = 1, any.missing = FALSE, all.missing = FALSE, null.ok = TRUE)
   checkmate::assertMatrix(tours, nrows = mu, null.ok = TRUE)
   mu = checkmate::asInt(mu)
   checkmate::assertChoice(mutation, choices = c("swap", "inversion", "jump", "scramble"))
@@ -37,6 +38,9 @@ runWTSPSolver = function(instance, packing, tours = NULL, mu = 1L, mutation = "s
 
   dimline = readLines(instance, 3)[3L]
   n = as.integer(strsplit(dimline, split = "[[:space:]]*:[[:space:]]*")[[1]][2])
+
+  itemsline = readLines(instance, 4)[4L]
+  m = as.integer(strsplit(itemsline, split = "[[:space:]]*:[[:space:]]*")[[1]][2])
 
   mutation.mapping = c("swap" = 0, "jump" = 1, "inversion" = 2, "scramble" = 3)#, "2opt" = 4)
   survival.mapping = c("classic" = 0, "parent" = 1)
@@ -48,6 +52,10 @@ runWTSPSolver = function(instance, packing, tours = NULL, mu = 1L, mutation = "s
       sample(1:n)
     })
     tours = do.call(rbind, tours)
+  }
+
+  if (is.null(packing)) {
+    packing = rep(1, m)
   }
 
   # delegate to c++
