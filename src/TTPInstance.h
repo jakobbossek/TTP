@@ -14,9 +14,10 @@
 
 class TTPSolution {
 public:
-  TTPSolution(std::vector<int> tour, std::vector<double> packing) {
+  TTPSolution(std::vector<int> tour, std::vector<double> packing, std::vector<int> rawPacking) {
     this->tour = tour;
     this->packing = packing;
+    this->rawPacking = rawPacking;
     this->value = INFINITY;
   }
 
@@ -36,6 +37,10 @@ public:
     return(this->packing);
   }
 
+  std::vector<int> getRawPacking() {
+    return(this->rawPacking);
+  }
+
   // Overloading < operator
   bool operator <(const TTPSolution &solution) {
     if (value < solution.value) {
@@ -51,6 +56,9 @@ public:
 private:
   double value;
   std::vector<int> tour;
+  // packing per item
+  std::vector<int> rawPacking;
+  // packing per node
   std::vector<double> packing;
 };
 
@@ -206,12 +214,33 @@ public:
     } // if (detailed)
   }
 
-  double evaluate(TTPSolution solution, double gamma) {
+  std::vector<double> calculatePackingByNode(std::vector<int> packing) {
+    int n = this->getNumberOfNodes();
+    std::vector<std::pair<std::vector<int>, std::vector<double>>> items = this->getItems();
+
+    // Calculate weight per node
+    std::vector<double> packingByNode(n);
+    for (int i = 0; i < packingByNode.size(); ++i) {
+      packingByNode[i] = 0.0;
+    }
+    // first item has weight 1
+    packingByNode[0] = 1.0;
+    for (int i = 0; i < packing.size(); ++i) {
+      if (packing[i] == 1) {
+        packingByNode[items[i].first[1] - 1] += items[i].second[1];
+      }
+    }
+    return(packingByNode);
+  }
+
+  // objective: 0 = wtsp, 1 = ttp
+  double evaluate(TTPSolution solution, int objectiveType) {
     // tour not neccessarily starting with 1 (will be rotated later)
     std::vector<int> tour = solution.getTour();
 
     // at position i this is already the sum of items weights of node i
     std::vector<double> packing = solution.getPacking();
+    std::vector<int> rawPacking = solution.getRawPacking();
 
     double length = 0;
     double weightSum = 0;
@@ -233,15 +262,49 @@ public:
       rotatedTour[i] = tour[idxInTour];
     }
 
-    // now calculate tour
-    for (int i = 0; i < n - 1; ++i) {
-      weightSum += packing[rotatedTour[i] - 1];
-      length += weightSum * this->getDistance(rotatedTour[i], rotatedTour[i + 1]);
-    }
-    weightSum += packing[rotatedTour[n - 1] - 1];
-    length += weightSum * this->getDistance(rotatedTour[n - 1], rotatedTour[0]);
+    if (objectiveType == 0) {
+      // now calculate WTSP (node weight tsp) tour
+      for (int i = 0; i < n - 1; ++i) {
+        weightSum += packing[rotatedTour[i] - 1];
+        length += weightSum * this->getDistance(rotatedTour[i], rotatedTour[i + 1]);
+      }
+      weightSum += packing[rotatedTour[n - 1] - 1];
+      length += weightSum * this->getDistance(rotatedTour[n - 1], rotatedTour[0]);
 
-    solution.setValue(length);
+      solution.setValue(length);
+    } else if (objectiveType == 1) {
+      // now calculate TTP1 (traveling thief problem) tour
+      double profitSum = 0.0;
+      double R = this->rentingRatio;
+      double W = this->capacity; // CAPACITY
+      // NOTE: deal with capacity (we allow to put all things in)
+      // Q: Sum up all item weights?
+      W = 0;
+      for (int i = 0; i < packing.size(); ++i) {
+        W += packing[i];
+      }
+      double vmax = this->maxSpeed;
+      double vmin = this->minSpeed;
+      double nu = (vmax - vmin) / W;
+
+      for (int i = 0; i < this->numberOfItems; ++i) {
+        profitSum += rawPacking[i] * this->items[i].second[0]; // add up profits
+      }
+
+      for (int i = 0; i < n - 1; ++i) {
+        weightSum += packing[rotatedTour[i] - 1];
+        length += this->getDistance(rotatedTour[i], rotatedTour[i + 1]) / (vmax - nu * weightSum);
+      }
+
+      weightSum += packing[rotatedTour[n - 1] - 1];
+      length += this->getDistance(rotatedTour[n - 1], rotatedTour[0]) / (vmax - nu * weightSum);
+      length = profitSum - R * length;
+
+      // we need to maximize! We handle it in the EA
+      //length = (-1) * length;
+
+      solution.setValue(length);
+    }
     return(length);
   }
 
@@ -319,27 +382,31 @@ public:
     int mutation,
     int survivalStrategy, // 0 = best of (mu + 1), 1 = keep best of parent and child
     int maxEvaluations,
-    double gamma
+    int objectiveType // 1 = WTSP, 2 = TTP1
     ) {
+
+    bool doMinimize = (objectiveType == 0);
 
     printf("Running (%d + %d)-EA on instance %s\n", mu, lambda, instance.getName().c_str());
 
+    instance.print(true);
     // extract some vars
     int n = instance.getNumberOfNodes();
-    std::vector<std::pair<std::vector<int>, std::vector<double>>> items = instance.getItems();
+    //std::vector<std::pair<std::vector<int>, std::vector<double>>> items = instance.getItems();
 
     // Calculate weight per node
-    std::vector<double> packingByNode(n);
-    for (int i = 0; i < packingByNode.size(); ++i) {
-      packingByNode[i] = 0.0;
-    }
-    // first item has weight 1
-    packingByNode[0] = 1.0;
-    for (int i = 0; i < packing.size(); ++i) {
-      if (packing[i] == 1) {
-        packingByNode[items[i].first[1] - 1] += items[i].second[1];
-      }
-    }
+    std::vector<double> packingByNode = instance.calculatePackingByNode(packing);
+    // std::vector<double> packingByNode(n);
+    // for (int i = 0; i < packingByNode.size(); ++i) {
+    //   packingByNode[i] = 0.0;
+    // }
+    // // first item has weight 1
+    // packingByNode[0] = 1.0;
+    // for (int i = 0; i < packing.size(); ++i) {
+    //   if (packing[i] == 1) {
+    //     packingByNode[items[i].first[1] - 1] += items[i].second[1];
+    //   }
+    // }
 
     // init random number generator
     std::default_random_engine rndgenerator;
@@ -348,8 +415,8 @@ public:
 
     std::vector<TTPSolution> population;
     for (int i = 0; i < mu; ++i) {
-      TTPSolution individual(tours[i], packingByNode);
-      double tourLength = instance.evaluate(individual, gamma);
+      TTPSolution individual(tours[i], packingByNode, packing);
+      double tourLength = instance.evaluate(individual, objectiveType);
       individual.setValue(tourLength);
       population.push_back(individual);
     }
@@ -456,7 +523,7 @@ public:
       //       }
       //       // evaluate
       //       TTPSolution childSolution(child, packingByNode);
-      //       double newValue = instance.evaluate(childSolution, gamma);
+      //       double newValue = instance.evaluate(childSolution, objectiveType);
       //       if (newValue < incumbantValue) {
       //         improved = true;
       //       }
@@ -465,8 +532,8 @@ public:
       // }
 
       // caluclate function value of mutant
-      TTPSolution childSolution(child, packingByNode);
-      double childLength = instance.evaluate(childSolution, gamma);
+      TTPSolution childSolution(child, packingByNode, packing);
+      double childLength = instance.evaluate(childSolution, objectiveType);
       childSolution.setValue(childLength);
 
       // decide which survival strategy to perform
@@ -474,22 +541,39 @@ public:
         // Do classical select mu from (mu+1) strategy
         population.push_back(childSolution);
 
-        sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
-          return s1.getValue() < s2.getValue();
-        });
+        if (doMinimize) {
+          sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
+            return s1.getValue() < s2.getValue();
+          });
+        } else {
+          sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
+            return s1.getValue() > s2.getValue();
+          });
+        }
 
         // delete last, i.e. worst, element
         population.pop_back();
       } else if (survivalStrategy == 1) {
         // Compare with parent only
         double parentLength = population[parentId].getValue();
-        if (childLength <= parentLength) {
-          population[parentId] = childSolution;
-        }
 
-        sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
-          return s1.getValue() < s2.getValue();
-        });
+        if (doMinimize) {
+          if (childLength <= parentLength) {
+            population[parentId] = childSolution;
+          }
+
+          sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
+            return s1.getValue() < s2.getValue();
+          });
+        } else {
+          if (childLength >= parentLength) {
+            population[parentId] = childSolution;
+          }
+
+          sort(population.begin(), population.end(), [](const TTPSolution& s1, const TTPSolution& s2) {
+            return s1.getValue() > s2.getValue();
+          });
+        }
       }
 
       // log progress
@@ -503,8 +587,14 @@ public:
         trajectory[evaluations] = incumbantValue;
       }
       trajectory[iteration] = population[0].getValue();
-      if ((iteration >= 1) && (trajectory[iteration] < trajectory[iteration - 1])) {
-        printf("New best value at iteration %d is %.2f\n", iteration, trajectory[iteration]);
+      if (doMinimize) {
+        if ((iteration >= 1) && (trajectory[iteration] < trajectory[iteration - 1])) {
+          printf("New best value at iteration %d is %.2f\n", iteration, trajectory[iteration]);
+        }
+      } else {
+        if ((iteration >= 1) && (trajectory[iteration] > trajectory[iteration - 1])) {
+          printf("New best value at iteration %d is %.2f\n", iteration, trajectory[iteration]);
+        }
       }
 
       ++iteration;

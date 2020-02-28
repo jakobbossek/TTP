@@ -5,11 +5,12 @@ library(scales)
 devtools::load_all()
 
 # load packings and run
-pathToPackings = "packings/BenchmarkTTP_n100_p0.5/BenchmarkTTP_n100_p0.5_c10_1.txt"
-pathToInstance = "instances/eil101-ttp/eil101_n1000_uncorr_01.ttp"
+set.seed(1)
+pathToPackings = "packings/BenchmarkTTP_n500_p0.5/BenchmarkTTP_n500_p0.5_c50_1.txt"
+pathToInstance = "instances/eil101-ttp/eil101_n500_uncorr_01.ttp"
 max.evals.initial = 10000L
-tau = 1000L
-n.runs = 10L
+tau = 25000L
+n.changes = 3L
 
 # st = system.time({
 # res = runWTSPSolver(
@@ -19,14 +20,18 @@ n.runs = 10L
 # print(st)
 # stop()
 
-
 res = runWTSPSolverInDynamicSetting(
   pathToInstance, pathToPackings,
-  mutation = "inversion", mu = 1L, n.changes = n.runs,# max.evals = max.evals.initial,
+  mutation = "inversion", start.from.scratch = FALSE, mu = 20L,
+  survival.strategy = "classic",
+  objective.type = "ttp",
+  n.changes = n.changes,# max.evals = max.evals.initial,
   tau = tau, max.evals.initial = max.evals.initial, full = TRUE)
 
 
 traj = lapply(res, function(r) r$trajectory)
 traj = do.call(c, traj)
-plot(traj, type = "s")
-abline(v = c(max.evals.initial + (0:n.runs) * tau), col = scales::alpha("blue", 0.12), lwd = 2, lty = 3)
+plot(log(traj), type = "s")#, xlim = c(floor(0.9 * max.evals.initial), max.evals.initial + tau * n.changes))
+#plot(log(traj), type = "s", ylim = c(18, 18.3))#, xlim = c(floor(0.9 * max.evals.initial), max.evals.initial + tau * n.changes))
+
+abline(v = c(max.evals.initial + (0:n.changes) * tau), col = scales::alpha("blue", 0.12), lwd = 2, lty = 3)

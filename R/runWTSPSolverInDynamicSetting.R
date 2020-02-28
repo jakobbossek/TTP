@@ -6,6 +6,9 @@
 #'   Path to file with row-wise binary packing vector.
 #' @param mutation [\code{character(1)}]\cr
 #'   See \code{\link{runWTSPSolver}}.
+#' @param objective.type [\code{character(1)}]\cr
+#'   Which objective function should be used?
+#'   One of \dQuote{wtsp} (node weighted TSP) or \dQuote{ttp} (Traveling Thief Problem).
 #' @param mu [\code{integer(1)}]\cr
 #'   Population size.
 #' @param survival.strategy [\code{character(1)}]\cr
@@ -35,7 +38,8 @@
 #' @export
 runWTSPSolverInDynamicSetting = function(
   pathToInstance, pathToPackings,
-  mutation, mu, survival.strategy,
+  mutation, objective.type = "wtsp",
+  mu, survival.strategy,
   tau,
   max.evals.initial,
   max.evals = NULL,
@@ -45,6 +49,7 @@ runWTSPSolverInDynamicSetting = function(
   checkmate::assertFileExists(pathToInstance)
   checkmate::assertFileExists(pathToPackings)
   checkmate::assertChoice(mutation, choices = c("swap", "inversion", "jump", "scramble"))
+  checkmate::assertChoice(objective.type, choices = c("wtsp", "ttp"))
   checkmate::assertChoice(survival.strategy, choices = c("classic", "parent"))
   mu = checkmate::asInt(mu)
   tau = checkmate::asInt(tau)
@@ -74,7 +79,8 @@ runWTSPSolverInDynamicSetting = function(
     BBmisc::catf("Run %i", r - 1L)
     res.run = runWTSPSolver(pathToInstance, packing = packings[r, ],
       tours = if (!start.from.scratch) init.tours else NULL,
-      mu = mu, mutation = mutation, survival.strategy = survival.strategy,
+      mu = mu, mutation = mutation, objective.type = objective.type,
+      survival.strategy = survival.strategy,
       max.evals = max.evals)
     init.tours = res.run$finalTours
     if (!full) {

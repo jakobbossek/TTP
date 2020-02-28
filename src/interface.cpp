@@ -5,11 +5,10 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int survivalStrategy, int maxEvaluations) {
+List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int objectiveType, int survivalStrategy, int maxEvaluations) {
   TTPInstance instance(pathToFile);
 
   // Now perform hill-climbing
-  int gamma = 0;
   int lambda = 1;
 
   int n = instance.getNumberOfNodes();
@@ -39,7 +38,7 @@ List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix init
     mutation,
     survivalStrategy,
     maxEvaluations,
-    gamma);
+    objectiveType);
 
   TTPSolution s = o.getSolution();
   std::vector<std::vector<int>> finalTours = o.getFinalTours();
@@ -51,9 +50,15 @@ List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix init
     }
   }
 
+  // calculate WTSP and TTP solution on final tour
+  double tourLengthWTSP = instance.evaluate(s, 0);
+  double tourLengthTTP  = instance.evaluate(s, 1);
+
   return List::create(
     _["tour.length"] = s.getValue(),
     _["tour"] = s.getTour(),
+    _["tour.length.wtsp"] = tourLengthWTSP,
+    _["tour.length.ttp"] = tourLengthTTP,
     _["finalTours"] = finalToursR,
     _["trajectory"] = o.getTrajectory()
   );

@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // runWTSPSolverC
-List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int survivalStrategy, int maxEvaluations);
-RcppExport SEXP _TTP_runWTSPSolverC(SEXP pathToFileSEXP, SEXP packingSEXP, SEXP initToursSEXP, SEXP muSEXP, SEXP mutationSEXP, SEXP survivalStrategySEXP, SEXP maxEvaluationsSEXP) {
+List runWTSPSolverC(String pathToFile, IntegerVector packing, IntegerMatrix initTours, int mu, int mutation, int objectiveType, int survivalStrategy, int maxEvaluations);
+RcppExport SEXP _TTP_runWTSPSolverC(SEXP pathToFileSEXP, SEXP packingSEXP, SEXP initToursSEXP, SEXP muSEXP, SEXP mutationSEXP, SEXP objectiveTypeSEXP, SEXP survivalStrategySEXP, SEXP maxEvaluationsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,15 +16,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerMatrix >::type initTours(initToursSEXP);
     Rcpp::traits::input_parameter< int >::type mu(muSEXP);
     Rcpp::traits::input_parameter< int >::type mutation(mutationSEXP);
+    Rcpp::traits::input_parameter< int >::type objectiveType(objectiveTypeSEXP);
     Rcpp::traits::input_parameter< int >::type survivalStrategy(survivalStrategySEXP);
     Rcpp::traits::input_parameter< int >::type maxEvaluations(maxEvaluationsSEXP);
-    rcpp_result_gen = Rcpp::wrap(runWTSPSolverC(pathToFile, packing, initTours, mu, mutation, survivalStrategy, maxEvaluations));
+    rcpp_result_gen = Rcpp::wrap(runWTSPSolverC(pathToFile, packing, initTours, mu, mutation, objectiveType, survivalStrategy, maxEvaluations));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_TTP_runWTSPSolverC", (DL_FUNC) &_TTP_runWTSPSolverC, 7},
+    {"_TTP_runWTSPSolverC", (DL_FUNC) &_TTP_runWTSPSolverC, 8},
     {NULL, NULL, 0}
 };
 
