@@ -2,10 +2,16 @@
 % Please edit documentation in R/runWTSPSolver.R
 \name{runWTSPSolver}
 \alias{runWTSPSolver}
+\alias{runWTSPSolverR}
 \title{Run weighted TSP solver.}
 \usage{
 runWTSPSolver(instance, packing = NULL, tours = NULL, mu = 1L,
-  mutation = "swap", survival.strategy = "classic", max.evals)
+  mutation = "swap", objective.type = "wtsp",
+  survival.strategy = "classic", max.evals)
+
+runWTSPSolverR(instance, packing = NULL, tours = NULL, mu = 1L,
+  mutation = "swap", objective.type = "wtsp",
+  survival.strategy = "classic", max.evals)
 }
 \arguments{
 \item{instance}{[\code{character(1)}]\cr
@@ -25,6 +31,10 @@ Population size.}
 
 \item{mutation}{[\code{character(1)}]\cr
 One of \dQuote{swap}, \dQuote{jump}, \dQuote{inversion} or \dQuote{scramble}.}
+
+\item{objective.type}{[\code{character(1)}]\cr
+Which objective function should be used?
+One of \dQuote{wtsp} (node weighted TSP) or \dQuote{ttp} (Traveling Thief Problem).}
 
 \item{survival.strategy}{[\code{character(1)}]\cr
 How to perform survival selection. Option \dQuote{classic} drops the

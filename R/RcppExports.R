@@ -5,3 +5,15 @@ runWTSPSolverC <- function(pathToFile, packing, initTours, mu, mutation, objecti
     .Call('_TTP_runWTSPSolverC', PACKAGE = 'TTP', pathToFile, packing, initTours, mu, mutation, objectiveType, survivalStrategy, maxEvaluations)
 }
 
+tspC <- function(tour, D) {
+    .Call('_TTP_tspC', PACKAGE = 'TTP', tour, D)
+}
+
+wtspC <- function(tour, problem, itemPackingPlan, itemWeights, itemAssignedNodes) {
+    .Call('_TTP_wtspC', PACKAGE = 'TTP', tour, problem, itemPackingPlan, itemWeights, itemAssignedNodes)
+}
+
+ttpC <- function(tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes) {
+    .Call('_TTP_ttpC', PACKAGE = 'TTP', tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes)
+}
+

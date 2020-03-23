@@ -23,9 +23,55 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// tspC
+NumericVector tspC(IntegerVector tour, NumericMatrix D);
+RcppExport SEXP _TTP_tspC(SEXP tourSEXP, SEXP DSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type tour(tourSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type D(DSEXP);
+    rcpp_result_gen = Rcpp::wrap(tspC(tour, D));
+    return rcpp_result_gen;
+END_RCPP
+}
+// wtspC
+NumericVector wtspC(IntegerVector tour, List problem, IntegerVector itemPackingPlan, NumericVector itemWeights, IntegerVector itemAssignedNodes);
+RcppExport SEXP _TTP_wtspC(SEXP tourSEXP, SEXP problemSEXP, SEXP itemPackingPlanSEXP, SEXP itemWeightsSEXP, SEXP itemAssignedNodesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type tour(tourSEXP);
+    Rcpp::traits::input_parameter< List >::type problem(problemSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type itemPackingPlan(itemPackingPlanSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type itemWeights(itemWeightsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type itemAssignedNodes(itemAssignedNodesSEXP);
+    rcpp_result_gen = Rcpp::wrap(wtspC(tour, problem, itemPackingPlan, itemWeights, itemAssignedNodes));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ttpC
+NumericVector ttpC(IntegerVector tour, List problem, IntegerVector itemPackingPlan, NumericVector itemProfits, NumericVector itemWeights, IntegerVector itemAssignedNodes);
+RcppExport SEXP _TTP_ttpC(SEXP tourSEXP, SEXP problemSEXP, SEXP itemPackingPlanSEXP, SEXP itemProfitsSEXP, SEXP itemWeightsSEXP, SEXP itemAssignedNodesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type tour(tourSEXP);
+    Rcpp::traits::input_parameter< List >::type problem(problemSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type itemPackingPlan(itemPackingPlanSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type itemProfits(itemProfitsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type itemWeights(itemWeightsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type itemAssignedNodes(itemAssignedNodesSEXP);
+    rcpp_result_gen = Rcpp::wrap(ttpC(tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TTP_runWTSPSolverC", (DL_FUNC) &_TTP_runWTSPSolverC, 8},
+    {"_TTP_tspC", (DL_FUNC) &_TTP_tspC, 2},
+    {"_TTP_wtspC", (DL_FUNC) &_TTP_wtspC, 5},
+    {"_TTP_ttpC", (DL_FUNC) &_TTP_ttpC, 6},
     {NULL, NULL, 0}
 };
 

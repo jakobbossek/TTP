@@ -4,9 +4,10 @@
 \alias{runWTSPSolverInDynamicSetting}
 \title{Wrapper for runWTSPSolver taking care of dynamic changes.}
 \usage{
-runWTSPSolverInDynamicSetting(pathToInstance, pathToPackings, mutation, mu,
-  survival.strategy, tau, max.evals.initial, max.evals = NULL,
-  n.changes = 3L, start.from.scratch = FALSE, full = FALSE)
+runWTSPSolverInDynamicSetting(pathToInstance, pathToPackings, mutation,
+  objective.type = "wtsp", mu, survival.strategy, tau, max.evals.initial,
+  max.evals = NULL, n.changes = 3L, start.from.scratch = FALSE,
+  full = FALSE)
 }
 \arguments{
 \item{pathToInstance}{[\code{character(1)}]\cr
@@ -17,6 +18,10 @@ Path to file with row-wise binary packing vector.}
 
 \item{mutation}{[\code{character(1)}]\cr
 See \code{\link{runWTSPSolver}}.}
+
+\item{objective.type}{[\code{character(1)}]\cr
+Which objective function should be used?
+One of \dQuote{wtsp} (node weighted TSP) or \dQuote{ttp} (Traveling Thief Problem).}
 
 \item{mu}{[\code{integer(1)}]\cr
 Population size.}

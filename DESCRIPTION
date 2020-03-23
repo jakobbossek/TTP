@@ -14,7 +14,8 @@ Depends:
 Imports:
     methods,
     Rcpp (>= 0.12.16),
-    checkmate (>= 1.1)
+    checkmate (>= 1.1),
+    ecr
 Suggests:
     testthat (>= 0.9.1),
     knitr,
