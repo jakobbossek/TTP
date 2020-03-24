@@ -77,7 +77,7 @@ runWTSPSolverInDynamicSetting = function(
       max.evals = if (r == 1L) max.evals.initial else tau
     }
     BBmisc::catf("Run %i", r - 1L)
-    res.run = runWTSPSolver(pathToInstance, packing = packings[r, ],
+    res.run = runWTSPSolverR(pathToInstance, packing = packings[r, ],
       tours = if (!start.from.scratch) init.tours else NULL,
       mu = mu, mutation = mutation, objective.type = objective.type,
       survival.strategy = survival.strategy,

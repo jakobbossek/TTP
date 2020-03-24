@@ -182,8 +182,32 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
   list(
     tour.length = best.fitness,
     tour = best.tour,
-    tour.length.wtsp = NA,
-    tour.length.ttp  = NA,
+    tour.length.wtsp = wtsp(tour, prob, packing),
+    tour.length.ttp  = ttp(tour, prob, packing),
     finalTours = tours,
     trajectory = trajectory)
+}
+
+mutInversion2 = function(ind) {
+  n = length(ind)
+  positionA = sample(1:n, 1L)
+  positionB = sample(1:n, 1L)
+  if (positionA != positionB) {
+    if (positionB < positionA) {
+      tmp = positionA
+      positionA = positionB
+      positionB = tmp
+    }
+    i = positionA
+    j = positionB
+    while (i < j) {
+      tmp = ind[i]
+      ind[i] = ind[j]
+      ind[j] = tmp
+      i = i + 1L
+      j = j - 1L
+    }
+  }
+  return(ind)
+
 }
