@@ -44,7 +44,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     "swap" = ecr::mutSwap,
     "inversion" = ecr::mutInversion,
     "jump" = ecr::mutJump,
-    "scramble" = ecr::mutScramble)
+    "scramble" = ecr::mutScramble
   ) # switch
 
   n.iters = 0L
