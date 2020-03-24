@@ -182,8 +182,8 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
   list(
     tour.length = best.fitness,
     tour = best.tour,
-    tour.length.wtsp = wtsp(tour, prob, packing),
-    tour.length.ttp  = ttp(tour, prob, packing),
+    tour.length.wtsp = wtsp(best.tour, prob, packing),
+    tour.length.ttp  = ttp(best.tour, prob, packing),
     finalTours = tours,
     trajectory = trajectory)
 }
