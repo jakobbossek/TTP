@@ -17,11 +17,10 @@ print(prob)
 
 init.tour = matrix(1:prob$n, nrow = 1L)
 
-
 st = system.time({
-res = runWTSPSolver(
+res = runWTSPSolverR(
   pathToInstance, packing = packing, tours = init.tour,
-  mutation = "inversion", mu = 1L, max.evals = 10000L, objective.type = "ttp")
+  mutation = "inversion", mu = 1L, max.evals = 30000L, objective.type = "wtsp", extended.trajectory = TRUE)
 })
 print(st)
 
@@ -29,11 +28,12 @@ print(res$tour.length)
 print(wtsp(res$tour, prob = prob, packing = packing))
 print(ttp(res$tour, prob = prob, packing = packing))
 
-
 print(res)
 
+g = plotTrajectories(res$trajectory) + ggplot2::facet_wrap(.~Objective, scales = "free_y", nrow = 1L)
+print(g)
+ggsave("trajectory_example.pdf", plot = g, width = 15, height = 3, device = cairo_pdf)
 stop()
-
 
 
 

@@ -151,8 +151,8 @@ NumericVector ttpC(IntegerVector tour, List problem, IntegerVector itemPackingPl
 
   // first node has ALWAYS weight 1 by definition of the node-weighted TSP
   // see our paper GECCO2020 paper for details
-  // FIXME: is it 1.0 for TTP or 0?
-  pbn[0] = 1.0;
+  // NOTE: this is 0.0 for the first city in the TTP (not 1.0 as it is in the WTSP).
+  pbn[0] = 0.0;
 
   // add up
   for (int i = 0; i < m; ++i) { // m is equal to packing.size()
@@ -161,10 +161,14 @@ NumericVector ttpC(IntegerVector tour, List problem, IntegerVector itemPackingPl
   }
 
   // total weight (this is our capacity since we allow to pack all items)
-  // FIXME: Add up all items and not just the packed ones?
+  // NOTE: We decided to add up ALL items and not just the packed ones?
+  // double W = 0.0;
+  // for (int i = 0; i < pbn.size(); ++i) {
+  //   W += pbn[i];
+  // }
   double W = 0.0;
-  for (int i = 0; i < pbn.size(); ++i) {
-    W += pbn[i];
+  for (int i = 0; i < m; ++i) {
+    W += itemWeights[i];
   }
 
   double nu = (vmax - vmin) / W;
