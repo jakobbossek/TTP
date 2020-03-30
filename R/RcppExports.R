@@ -17,6 +17,10 @@ ttpC <- function(tour, problem, itemPackingPlan, itemProfits, itemWeights, itemA
     .Call('_TTP_ttpC', PACKAGE = 'TTP', tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes)
 }
 
+monotonC <- function(seq, relation) {
+    .Call('_TTP_monotonC', PACKAGE = 'TTP', seq, relation)
+}
+
 getMonotonicBlocksC <- function(mon) {
     .Call('_TTP_getMonotonicBlocksC', PACKAGE = 'TTP', mon)
 }

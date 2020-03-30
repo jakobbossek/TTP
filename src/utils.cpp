@@ -3,6 +3,38 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
+LogicalVector monotonC(NumericVector seq, CharacterVector relation) {
+  int n = seq.size();
+  LogicalVector mon(n - 1);
+
+  for (int i = 0; i < n - 1; ++i) {
+    if (relation[0] == "<") {
+      mon[i] = (seq[i] < seq[i+1]);
+    } else if (relation[0] == ">") {
+      mon[i] = (seq[i] > seq[i+1]);
+    } else if (relation[0] == ">=") {
+      mon[i] = (seq[i] >= seq[i+1]);
+    } else if (relation[0] == "<=") {
+      mon[i] = (seq[i] <= seq[i+1]);
+    } else if (relation[0] == "<<=") {
+      if ((i > 0 && !mon[i-1]) || i == 0) {
+        mon[i] = (seq[i] < seq[i+1]);
+      } else {
+        mon[i] = (seq[i] <= seq[i+1]);
+      }
+    } else if (relation[0] == ">>=") {
+      if ((i > 0 && !mon[i-1]) || i == 0) {
+        mon[i] = (seq[i] > seq[i+1]);
+      } else {
+        mon[i] = (seq[i] >= seq[i+1]);
+      }
+    }
+  }
+
+  return mon;
+}
+
+// [[Rcpp::export]]
 List getMonotonicBlocksC(NumericVector mon) {
   // storage for (start, end) pairs
   std::vector<int> starts;

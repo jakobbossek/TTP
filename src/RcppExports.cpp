@@ -66,6 +66,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// monotonC
+LogicalVector monotonC(NumericVector seq, CharacterVector relation);
+RcppExport SEXP _TTP_monotonC(SEXP seqSEXP, SEXP relationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type relation(relationSEXP);
+    rcpp_result_gen = Rcpp::wrap(monotonC(seq, relation));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getMonotonicBlocksC
 List getMonotonicBlocksC(NumericVector mon);
 RcppExport SEXP _TTP_getMonotonicBlocksC(SEXP monSEXP) {
@@ -83,6 +95,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TTP_tspC", (DL_FUNC) &_TTP_tspC, 2},
     {"_TTP_wtspC", (DL_FUNC) &_TTP_wtspC, 5},
     {"_TTP_ttpC", (DL_FUNC) &_TTP_ttpC, 6},
+    {"_TTP_monotonC", (DL_FUNC) &_TTP_monotonC, 2},
     {"_TTP_getMonotonicBlocksC", (DL_FUNC) &_TTP_getMonotonicBlocksC, 1},
     {NULL, NULL, 0}
 };

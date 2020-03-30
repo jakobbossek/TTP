@@ -28,10 +28,11 @@ normalize = function(x) {
 #' @export
 monoton = function(x, relation = "<=") {
   checkmate::assertNumeric(x, min.len = 2L, any.missing = FALSE, all.missing = FALSE)
-  checkmate::assertSubset(relation, choices = c("<=", "<", ">=", ">"))
-  relation = base::match.fun(relation)
-  n = length(x)
-  relation(x[1L:(n-1L)], x[2L:n])
+  checkmate::assertSubset(relation, choices = c("<=", "<", ">=", ">", "<<=", ">>="))
+  #relation = base::match.fun(relation)
+  #n = length(x)
+  #relation(x[1L:(n-1L)], x[2L:n])
+  monotonC(x, relation)
 }
 
 #' @title Get monotonic sequences.
@@ -45,8 +46,6 @@ monoton = function(x, relation = "<=") {
 #' indizes.
 #' @export
 getMonotonicBlocks = function(x, relation = "<=") {
-  checkmate::assertNumeric(x, min.len = 2L, any.missing = FALSE, all.missing = FALSE)
-  checkmate::assertSubset(relation, choices = c("<=", "<", ">=", ">"))
   mon = monoton(x, relation)
   # +1 in the following because we compare x[i] with x[i+1] and hence
   # vector 'mon' has length (length(x) - 1)
