@@ -2,7 +2,12 @@
 #' @name runWTSPSolver
 #' @export
 runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutation = "swap", objective.type = "wtsp", survival.strategy = "classic", max.evals, extended.trajectory = FALSE) {
-  checkmate::assertFileExists(instance)
+  if (is.character(instance)) {
+    checkmate::assertFileExists(instance)
+    prob = load(instance)
+  } else {
+    prob = instance
+  }
   checkmate::assertInteger(packing, lower = 0, upper = 1, any.missing = FALSE, all.missing = FALSE, null.ok = TRUE)
   checkmate::assertMatrix(tours, nrows = mu, null.ok = TRUE)
   mu = checkmate::asInt(mu)
@@ -18,9 +23,6 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     "ttp"  = ttp,
     "wtsp" = wtsp
   ) # switch
-
-  # load instance
-  prob = load(instance)
 
   # init population ...
   if (is.null(tours)) {
@@ -129,6 +131,6 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     tour = best.tour,
     tour.length.wtsp = wtsp(best.tour, prob, packing),
     tour.length.ttp  = ttp(best.tour, prob, packing),
-    finalTours = tours,
+    tours = tours,
     trajectory = trajectory)
 }

@@ -4,10 +4,25 @@
 #'
 #' @param path [\code{character(1)}]\cr
 #'   Path to TTP instance.
+#' @param ... [any]\cr
+#'   Possibility to overwrite atomic parameters, e.g. the knapsack capacity \code{capacity}
+#'   or the maximum velocity \code{vmax}. This is useful if parameters are to
+#'   be varied in studies. Note that no sanity checks are performed here. So you should
+#'   know what you do.
 #' @return [\code{ttp_instance}] Basically a list with class \dQuote{ttp_instance}.
+#' @examples
+#' \dontrun{
+#' fp = "path/to/my/ttp/instance.ttp"
+#' x = load(fp)
+#' x = load(fp, vmax = 20, R = 20000)
+#' }
 #' @export
-load = function(path) {
+load = function(path, ...) {
   checkmate::assertFileExists(path, extension = "ttp", access = "r")
+  overwrite.args = list(...)
+  if (length(overwrite.args) > 0L)
+    checkmate::assertSubset(names(overwrite.args), choices = c("capacity", "vmin", "vmax", "R"))
+
   meta = readLines(path, n = 9L)
   meta = lapply(meta, parseLine)
   names(meta) = c("name", "type", "n", "m", "capacity", "vmin", "vmax", "R", "edge_weight_type")
@@ -17,6 +32,9 @@ load = function(path) {
   meta$vmin = as.numeric(meta$vmin)
   meta$vmax = as.numeric(meta$vmax)
   meta$R = as.numeric(meta$R)
+
+  if (length(overwrite.args) > 0L)
+    BBmisc::insert(meta, overwrite.args)
 
   n.skip = 10L
   meta$coordinates = read.table(path, header = FALSE, skip = n.skip, nrows = meta$n)[, 2:3, drop = FALSE]

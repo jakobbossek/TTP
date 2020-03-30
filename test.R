@@ -24,15 +24,21 @@ res = runWTSPSolverR(
 })
 print(st)
 
+saveRDS(res, file = "trajectory.rds")
+
 print(res$tour.length)
 print(wtsp(res$tour, prob = prob, packing = packing))
 print(ttp(res$tour, prob = prob, packing = packing))
 
 print(res)
 
+res$trajectory$objective = NULL
 g = plotTrajectories(res$trajectory) + ggplot2::facet_wrap(.~Objective, scales = "free_y", nrow = 1L)
-print(g)
-ggsave("trajectory_example.pdf", plot = g, width = 15, height = 3, device = cairo_pdf)
+g2 = plotTrajectories(res$trajectory[5000:15000, ]) + ggplot2::facet_wrap(.~Objective, scales = "free_y", nrow = 1L)
+g2 = g2 + ggplot2::scale_x_continuous(breaks = seq(0, 10000, by = 2500), labels = as.character(seq(5000, 15000, by = 2500)))
+gg = gridExtra::grid.arrange(g, g2, nrow = 2L)
+print(gg)
+ggsave("trajectory_example.pdf", plot = gg, width = 15, height = 8, device = cairo_pdf)
 stop()
 
 

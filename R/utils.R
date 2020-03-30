@@ -15,7 +15,7 @@ normalize = function(x) {
 #' @title Check for monotonic behavior.
 #'
 #' @description Given a numeric input vector \code{x} and a binary relation
-#' \code{relation}, e.g. \code{relation = "<=""}, the function returns a logical
+#' \code{relation}, e.g. \code{relation = "<="}, the function returns a logical
 #' vector \code{y} of length \code{length(x) - 1} with \code{y[i] == TRUE} iff
 #' \code{relation(x[i], x[i+1]) == TRUE} for \eqn{i = 1, \ldots, n-1} where
 #' \eqn{n} is equal to \code{length(x)}.
@@ -41,7 +41,7 @@ monoton = function(x, relation = "<=") {
 #' the start and end positions of monotonic blocks in \code{x} and its lengths.
 #'
 #' @inheritParams monoton
-#' @return [\code{matrix(2, *)}] Matrix with start (top row) and end (bottom row)
+#' @return [\code{matrix(2, n)}] Matrix with start (top row) and end (bottom row)
 #' indizes.
 #' @export
 getMonotonicBlocks = function(x, relation = "<=") {

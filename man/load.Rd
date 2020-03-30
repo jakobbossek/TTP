@@ -4,15 +4,28 @@
 \alias{load}
 \title{TTP instance loader.}
 \usage{
-load(path)
+load(path, ...)
 }
 \arguments{
 \item{path}{[\code{character(1)}]\cr
 Path to TTP instance.}
+
+\item{...}{[any]\cr
+Possibility to overwrite atomic parameters, e.g. the knapsack capacity \code{capacity}
+or the maximum velocity \code{vmax}. This is useful if parameters are to
+be varied in studies. Note that no sanity checks are performed here. So you should
+know what you do.}
 }
 \value{
 [\code{ttp_instance}] Basically a list with class \dQuote{ttp_instance}.
 }
 \description{
 Loads TTP instance.
+}
+\examples{
+\dontrun{
+fp = "path/to/my/ttp/instance.ttp"
+x = load(fp)
+x = load(fp, vmax = 20, R = 20000)
+}
 }

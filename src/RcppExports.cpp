@@ -66,12 +66,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getMonotonicBlocksC
+List getMonotonicBlocksC(NumericVector mon);
+RcppExport SEXP _TTP_getMonotonicBlocksC(SEXP monSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type mon(monSEXP);
+    rcpp_result_gen = Rcpp::wrap(getMonotonicBlocksC(mon));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TTP_runWTSPSolverC", (DL_FUNC) &_TTP_runWTSPSolverC, 8},
     {"_TTP_tspC", (DL_FUNC) &_TTP_tspC, 2},
     {"_TTP_wtspC", (DL_FUNC) &_TTP_wtspC, 5},
     {"_TTP_ttpC", (DL_FUNC) &_TTP_ttpC, 6},
+    {"_TTP_getMonotonicBlocksC", (DL_FUNC) &_TTP_getMonotonicBlocksC, 1},
     {NULL, NULL, 0}
 };
 
