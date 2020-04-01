@@ -1,4 +1,6 @@
 #include <Rcpp.h>
+#include <cstdlib>
+#include <algorithm>
 
 using namespace Rcpp;
 
@@ -78,4 +80,113 @@ List getMonotonicBlocksC(NumericVector mon) {
     _["length"] = lengthsR,
     _["n"] = starts.size()
   );
+}
+
+// [[Rcpp::export]]
+NumericVector shiftTourC(NumericVector tour) {
+  int n = tour.size();
+
+  // shift tour such that node #1 is the first one in the permutation
+  // NumericVector rt = rotateTour(tour);
+  NumericVector stour(n);
+
+  // locate node "NUMBER 1"
+  int loc = 0;
+  for (int i = 0; i < n; ++i) {
+    if (tour[i] == 1) {
+      loc = i;
+      break;
+    }
+  }
+
+  // now shift
+  for (int i = 0; i < n; ++i) {
+    int locInTour = (i + loc) % n;
+    stour[i] = tour[locInTour];
+  }
+
+  return stour;
+}
+
+// [[Rcpp::export]]
+double getUncommonEdges(NumericVector tour1, NumericVector tour2, bool normalize) {
+  double overlap = 0;
+  unsigned int n = tour1.size();
+
+  for (unsigned int i = 0; i < n; ++i) {
+    // start and end in first tour
+    int tour1s = tour1[i];
+    int tour1d = tour1[(i + 1) % n];
+    for (unsigned int j = 0; j < n; ++j) {
+      // start and end in second tour
+      int tour2s = tour2[j];
+      int tour2d = tour2[(j + 1) % n];
+      // now check
+      if (((tour1s == tour2s) && (tour1d == tour2d)) || ((tour1s == tour2d) && (tour1d == tour2s))) {
+        overlap += 1;
+        break;
+      }
+    }
+  }
+
+  double uncommon = n - overlap;
+
+  if (normalize) {
+    uncommon /= n;
+  }
+
+  return uncommon;
+}
+
+// [[Rcpp::export]]
+double getNumberOfInversionsC(IntegerVector v1, IntegerVector v2, bool normalize) {
+  double inversions = 0;
+  unsigned int n = v1.size();
+
+  for (unsigned int i = 0; i < n; ++i) {
+    for (unsigned int j = i + 1; j < n; ++j) {
+      int v1a = v1[i];
+      int v1b = v1[j];
+
+      if (((v1a < v1b) & (v2[v1a-1] > v2[v1b-1])) || ((v1a > v1b) & (v2[v1a-1] > v2[v1b-1]))) {
+        //printf("v1[%d] = %d < v1[%d] = %d & v2[%d] = %d > v2[%d] = %d\n", i+1, v1a, j+1, v1b, v1a, v2[v1a], v1b, v2[v1b]);
+        inversions += 1;
+      }
+      //else if (((v1a > v1b) & (v2[v1a-1] > v2[v1b-1]))) {
+        //printf("v1[%d] = %d > v1[%d] = %d & v2[%d] = %d > v2[%d] = %d\n", i+1, v1a, j+1, v1b, v1a, v2[v1a], v1b, v2[v1b]);
+        //inversions += 1;
+      //}
+    }
+  }
+
+  if (normalize) {
+    inversions /= (n * (n - 1) * 0.5);
+  }
+
+  return inversions;
+}
+
+// Maximum distance an element must travel to be in its sorted position (O(n log(n)))
+// [[Rcpp::export]]
+double getMaximumDistanceC(IntegerVector tour1, IntegerVector tour2, bool normalize) {
+  int maxdist = 0;
+  int n = tour1.size();
+
+  for (int i = 0; i < n; ++i) {
+    // element
+    int elem = tour1[i];
+    // the elements position in tour2 (-1 cause permutations are in {1, ..., n} in R)
+    int posInTour2 = tour2[elem - 1] - 1;
+    // update dist
+    maxdist = std::max(maxdist, abs(i - posInTour2));
+  }
+
+  if (normalize)
+    maxdist /= (n - 1);
+
+  return maxdist;
+}
+
+double getRunsC(IntegerVector tour1, IntegerVector tour2, bool normalize) {
+  return 1.0;
 }

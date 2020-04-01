@@ -89,6 +89,56 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// shiftTourC
+NumericVector shiftTourC(NumericVector tour);
+RcppExport SEXP _TTP_shiftTourC(SEXP tourSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type tour(tourSEXP);
+    rcpp_result_gen = Rcpp::wrap(shiftTourC(tour));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getUncommonEdges
+double getUncommonEdges(NumericVector tour1, NumericVector tour2, bool normalize);
+RcppExport SEXP _TTP_getUncommonEdges(SEXP tour1SEXP, SEXP tour2SEXP, SEXP normalizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type tour1(tour1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type tour2(tour2SEXP);
+    Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(getUncommonEdges(tour1, tour2, normalize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getNumberOfInversionsC
+double getNumberOfInversionsC(IntegerVector v1, IntegerVector v2, bool normalize);
+RcppExport SEXP _TTP_getNumberOfInversionsC(SEXP v1SEXP, SEXP v2SEXP, SEXP normalizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type v2(v2SEXP);
+    Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(getNumberOfInversionsC(v1, v2, normalize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getMaximumDistanceC
+double getMaximumDistanceC(IntegerVector tour1, IntegerVector tour2, bool normalize);
+RcppExport SEXP _TTP_getMaximumDistanceC(SEXP tour1SEXP, SEXP tour2SEXP, SEXP normalizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type tour1(tour1SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type tour2(tour2SEXP);
+    Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(getMaximumDistanceC(tour1, tour2, normalize));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TTP_runWTSPSolverC", (DL_FUNC) &_TTP_runWTSPSolverC, 8},
@@ -97,6 +147,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TTP_ttpC", (DL_FUNC) &_TTP_ttpC, 6},
     {"_TTP_monotonC", (DL_FUNC) &_TTP_monotonC, 2},
     {"_TTP_getMonotonicBlocksC", (DL_FUNC) &_TTP_getMonotonicBlocksC, 1},
+    {"_TTP_shiftTourC", (DL_FUNC) &_TTP_shiftTourC, 1},
+    {"_TTP_getUncommonEdges", (DL_FUNC) &_TTP_getUncommonEdges, 3},
+    {"_TTP_getNumberOfInversionsC", (DL_FUNC) &_TTP_getNumberOfInversionsC, 3},
+    {"_TTP_getMaximumDistanceC", (DL_FUNC) &_TTP_getMaximumDistanceC, 3},
     {NULL, NULL, 0}
 };
 

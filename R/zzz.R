@@ -3,6 +3,7 @@
 #' @import methods
 #' @import Rcpp
 #' @import ecr
+#' @import re
 #' @importFrom utils write.table read.table head
 #' @useDynLib TTP
 # .registration=TRUE

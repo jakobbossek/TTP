@@ -25,3 +25,19 @@ getMonotonicBlocksC <- function(mon) {
     .Call('_TTP_getMonotonicBlocksC', PACKAGE = 'TTP', mon)
 }
 
+shiftTourC <- function(tour) {
+    .Call('_TTP_shiftTourC', PACKAGE = 'TTP', tour)
+}
+
+getUncommonEdges <- function(tour1, tour2, normalize) {
+    .Call('_TTP_getUncommonEdges', PACKAGE = 'TTP', tour1, tour2, normalize)
+}
+
+getNumberOfInversionsC <- function(v1, v2, normalize) {
+    .Call('_TTP_getNumberOfInversionsC', PACKAGE = 'TTP', v1, v2, normalize)
+}
+
+getMaximumDistanceC <- function(tour1, tour2, normalize) {
+    .Call('_TTP_getMaximumDistanceC', PACKAGE = 'TTP', tour1, tour2, normalize)
+}
+
