@@ -8,6 +8,6 @@
 #' @return [\code{integer}] Shifted permutation.
 #' @export
 shiftTour = function(x) {
-  checkmate::assertInteger(x, any.missing = FALSE, all.missing = FALSE)
+  checkmate::assertIntegerish(x, any.missing = FALSE, all.missing = FALSE)
   shiftTourC(x)
 }

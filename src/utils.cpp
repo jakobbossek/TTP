@@ -169,7 +169,7 @@ double getNumberOfInversionsC(IntegerVector v1, IntegerVector v2, bool normalize
 // Maximum distance an element must travel to be in its sorted position (O(n log(n)))
 // [[Rcpp::export]]
 double getMaximumDistanceC(IntegerVector tour1, IntegerVector tour2, bool normalize) {
-  int maxdist = 0;
+  double maxdist = 0;
   int n = tour1.size();
 
   for (int i = 0; i < n; ++i) {
@@ -178,7 +178,10 @@ double getMaximumDistanceC(IntegerVector tour1, IntegerVector tour2, bool normal
     // the elements position in tour2 (-1 cause permutations are in {1, ..., n} in R)
     int posInTour2 = tour2[elem - 1] - 1;
     // update dist
-    maxdist = std::max(maxdist, abs(i - posInTour2));
+    if (abs(i - posInTour2) > maxdist) {
+      maxdist = abs(i - posInTour2);
+    }
+    // maxdist = std::max(maxdist, abs(i - posInTour2));
   }
 
   if (normalize)

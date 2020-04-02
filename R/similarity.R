@@ -31,3 +31,16 @@ measureDisorder = function(tour1, tour2, normalize = FALSE, method = "uncommoned
     "run" = getRunsC(tour1, order(tour2), normalize)
   ) # switch
 }
+
+# measureDisorderSet = function(tour1, tour2, type) {
+#   methods = c("uncommonedges", "inversion", "run", "maxdist")
+#   measures = lapply(methods, function(m) {
+#     measureDisorder(tour1, tour2, method = m, normalize = FALSE)
+#   })
+#   names(measures) = paste0(type, ".", methods)
+#   measures.norm = lapply(methods, function(m) {
+#     measureDisorder(tour1, tour2, method = m, normalize = TRUE)
+#   })
+#   names(measures.norm) = paste0(type, ".", methods, ".norm")
+#   return(c(measures, measures.norm))
+# }
