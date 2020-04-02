@@ -3,6 +3,7 @@
 S3method(print,ttp_instance)
 export(getMonotonicBlocks)
 export(getOptimalTSPTour)
+export(getTourByIncreasingWeight)
 export(load)
 export(loadPackings)
 export(measureDisorder)

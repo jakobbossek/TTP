@@ -12,7 +12,7 @@
 #' @param method [\code{character(1)}]\cr
 #'   Method used to measure disorder/dissimilarity One of \dQuote{uncommonedges},
 #'   \dQuote{inversion}, \dQuote{maxdist} or \dQuote{run}.
-#' @return [\code{numeric(1)}]
+#' @return [\code{numeric(1)} | \code{list}]
 #' @rdname permutation disorder
 #' @export
 measureDisorder = function(tour1, tour2, normalize = FALSE, method = "uncommonedges") {
@@ -28,6 +28,6 @@ measureDisorder = function(tour1, tour2, normalize = FALSE, method = "uncommoned
     # NOTE: order(tour2) is crucial here!
     "inversion" = getNumberOfInversionsC(tour1, order(tour2), normalize),
     "maxdist" = getMaximumDistanceC(tour1, order(tour2), normalize),
-    "run" = getRunsC(tour1, tour2, normalize)# re::stopf("[measureDisorder] Method 'run' is not implemented.")
+    "run" = getRunsC(tour1, order(tour2), normalize)
   ) # switch
 }

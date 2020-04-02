@@ -139,6 +139,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getRunsC
+List getRunsC(IntegerVector tour1, IntegerVector tour2, bool normalize);
+RcppExport SEXP _TTP_getRunsC(SEXP tour1SEXP, SEXP tour2SEXP, SEXP normalizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type tour1(tour1SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type tour2(tour2SEXP);
+    Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(getRunsC(tour1, tour2, normalize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getWeightByNodeC
+NumericVector getWeightByNodeC(List problem, IntegerVector itemPackingPlan, NumericVector itemWeights, IntegerVector itemAssignedNodes);
+RcppExport SEXP _TTP_getWeightByNodeC(SEXP problemSEXP, SEXP itemPackingPlanSEXP, SEXP itemWeightsSEXP, SEXP itemAssignedNodesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type problem(problemSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type itemPackingPlan(itemPackingPlanSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type itemWeights(itemWeightsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type itemAssignedNodes(itemAssignedNodesSEXP);
+    rcpp_result_gen = Rcpp::wrap(getWeightByNodeC(problem, itemPackingPlan, itemWeights, itemAssignedNodes));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TTP_runWTSPSolverC", (DL_FUNC) &_TTP_runWTSPSolverC, 8},
@@ -151,6 +178,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TTP_getUncommonEdges", (DL_FUNC) &_TTP_getUncommonEdges, 3},
     {"_TTP_getNumberOfInversionsC", (DL_FUNC) &_TTP_getNumberOfInversionsC, 3},
     {"_TTP_getMaximumDistanceC", (DL_FUNC) &_TTP_getMaximumDistanceC, 3},
+    {"_TTP_getRunsC", (DL_FUNC) &_TTP_getRunsC, 3},
+    {"_TTP_getWeightByNodeC", (DL_FUNC) &_TTP_getWeightByNodeC, 4},
     {NULL, NULL, 0}
 };
 

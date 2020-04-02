@@ -187,6 +187,82 @@ double getMaximumDistanceC(IntegerVector tour1, IntegerVector tour2, bool normal
   return maxdist;
 }
 
-double getRunsC(IntegerVector tour1, IntegerVector tour2, bool normalize) {
-  return 1.0;
+// [[Rcpp::export]]
+List getRunsC(IntegerVector tour1, IntegerVector tour2, bool normalize) {
+  unsigned int n = tour1.size();
+  std::vector<int> lengths;
+
+  unsigned int block_length = 2;
+  int direction = 0;
+
+  // NOTE: the case distinction could be shortened. However, I believe
+  // this way it is most intelligible
+  for (unsigned int i = 0; i < n - 1; ++i) {
+    int a = tour1[i], b = tour1[i + 1];
+    // are a and b adjacent in the same order in t2?
+    //printf("(%d, %d) -> (%d, %d) and (%d - %d) = %d\n", i, i+1, a, b, tour2[a-1], tour2[b-1], tour2[a-1] - tour2[b-1]);
+    if ((tour2[a - 1] - tour2[b - 1]) == -1) {
+      if ((direction == - 1) && (a > b)) { // in decreasing sequence?
+        block_length += 1;
+      } else if ((direction == 1) && (a < b)) { // in increasing sequence?
+        block_length += 1;
+      } else if ((direction == -1) && (a < b)) { // change in direction: was decr., is now incr.
+        lengths.push_back(block_length);
+        direction = 1;
+        block_length = 2;
+      } else if ((direction == 1) && (a > b)) { // change in direction: was incr., is now decr.
+        lengths.push_back(block_length);
+        direction = -1;
+        block_length = 2;
+      } else if ((direction == 0) && (a < b)) { // found new increasing block
+        direction = 1;
+        block_length = 2;
+      } else if ((direction == 0) && (a > b)) { // found new decreasing block
+        direction = -1;
+        block_length = 2;
+      } else {
+        Rcpp::stop("[getRunsC] Actually impossible case. This should never happen!\n");
+      }
+    } else if (direction != 0) { // are we at least in a block?
+      lengths.push_back(block_length);
+      direction = 0;
+      block_length = 1;
+    }
+  }
+
+  // handle last iteration
+  if (direction != 0) {
+    lengths.push_back(block_length);
+  }
+
+  return List::create(
+    _["length"] = wrap(lengths),
+    _["n"] = lengths.size()
+  );
+
+}
+
+// [[Rcpp::export]]
+NumericVector getWeightByNodeC(List problem, IntegerVector itemPackingPlan, NumericVector itemWeights, IntegerVector itemAssignedNodes) {
+  int n = (int)(problem["n"]);
+  int m = (int)(problem["m"]);
+
+  NumericVector pbn(n);
+
+  // calculate packing by node, i.e. sum of weights for each single node
+  for (int i = 0; i < n; ++i) {
+    pbn[i] = 0.0;
+  }
+
+  // first node has ALWAYS weight 1 by definition of the node-weighted TSP
+  // see our paper GECCO2020 paper for details
+  pbn[0] = 0.0;
+
+  // add up
+  for (int i = 0; i < m; ++i) { // m is equal to packing.size()
+    int assignedNode = itemAssignedNodes[i] - 1;
+    pbn[assignedNode] += (itemPackingPlan[i] * itemWeights[i]);
+  }
+
+  return pbn;
 }

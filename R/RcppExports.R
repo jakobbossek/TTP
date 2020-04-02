@@ -41,3 +41,11 @@ getMaximumDistanceC <- function(tour1, tour2, normalize) {
     .Call('_TTP_getMaximumDistanceC', PACKAGE = 'TTP', tour1, tour2, normalize)
 }
 
+getRunsC <- function(tour1, tour2, normalize) {
+    .Call('_TTP_getRunsC', PACKAGE = 'TTP', tour1, tour2, normalize)
+}
+
+getWeightByNodeC <- function(problem, itemPackingPlan, itemWeights, itemAssignedNodes) {
+    .Call('_TTP_getWeightByNodeC', PACKAGE = 'TTP', problem, itemPackingPlan, itemWeights, itemAssignedNodes)
+}
+

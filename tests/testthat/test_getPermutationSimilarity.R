@@ -13,4 +13,11 @@ test_that("measureDisorder", {
 
   expect_equal(measureDisorder(p1, p1, method = "maxdist"), 0)
   expect_equal(measureDisorder(p1, rev(p1), method = "maxdist"), n - 1)
+
+  run = measureDisorder(p1, p1, method = "run")
+  expect_equal(run$n, 1L)
+  expect_true(run$length == n)
+
+  run = measureDisorder(p1, rev(p1), method = "run")
+  expect_equal(run$n, 0L)
 })
