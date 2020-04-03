@@ -34,7 +34,7 @@ load = function(path, ...) {
   meta$R = as.numeric(meta$R)
 
   if (length(overwrite.args) > 0L)
-    BBmisc::insert(meta, overwrite.args)
+    meta = BBmisc::insert(meta, overwrite.args)
 
   n.skip = 10L
   meta$coordinates = read.table(path, header = FALSE, skip = n.skip, nrows = meta$n)[, 2:3, drop = FALSE]
@@ -59,13 +59,13 @@ parseLine = function(line) {
 
 #' @export
 print.ttp_instance = function(x, ...) {
-  catf("TTP:                  %s (%s)", x$name, x$type)
-  catf("#Nodes:               %i", x$n)
-  catf("#Items:               %i (%i per node)", x$m, x$m / (x$n - 1))
-  catf("Knapsack capacity:    %.2f", x$capacity)
-  catf("Min. velocity (vmin): %.2f", x$vmin)
-  catf("Max. velocity (vmax): %.2f", x$vmax)
-  catf("Renting price:        %.2f", x$R)
-  catf("First 10 items:")
+  catf("TTP:                  %s (%s)\n", x$name, x$type)
+  catf("#Nodes:               %i\n", x$n)
+  catf("#Items:               %i (%i per node)\n", x$m, x$m / (x$n - 1))
+  catf("Knapsack capacity:    %.2f\n", x$capacity)
+  catf("Min. velocity (vmin): %.2f\n", x$vmin)
+  catf("Max. velocity (vmax): %.2f\n", x$vmax)
+  catf("Renting price:        %.2f\n", x$R)
+  catf("First 10 items:\n")
   print(head(x$items, n = 10L))
 }

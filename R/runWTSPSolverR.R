@@ -110,7 +110,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
 
     # logging
     if (found.better) {
-      catf("New best value at iteration %i is %.2f", n.iters, trajectory[n.evals])
+      catf("New best value at iteration %i is %.2f\n", n.iters, trajectory[n.evals])
     }
 
     # check termination condition
