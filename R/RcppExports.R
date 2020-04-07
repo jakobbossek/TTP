@@ -13,8 +13,8 @@ wtspC <- function(tour, problem, itemPackingPlan, itemWeights, itemAssignedNodes
     .Call('_TTP_wtspC', PACKAGE = 'TTP', tour, problem, itemPackingPlan, itemWeights, itemAssignedNodes)
 }
 
-ttpC <- function(tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes) {
-    .Call('_TTP_ttpC', PACKAGE = 'TTP', tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes)
+ttpC <- function(tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes, weightOnly) {
+    .Call('_TTP_ttpC', PACKAGE = 'TTP', tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes, weightOnly)
 }
 
 monotonC <- function(seq, relation) {

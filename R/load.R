@@ -13,11 +13,11 @@
 #' @examples
 #' \dontrun{
 #' fp = "path/to/my/ttp/instance.ttp"
-#' x = load(fp)
-#' x = load(fp, vmax = 20, R = 20000)
+#' x = loadProblem(fp)
+#' x = loadProblem(fp, vmax = 20, R = 20000)
 #' }
 #' @export
-load = function(path, ...) {
+loadProblem = function(path, ...) {
   checkmate::assertFileExists(path, extension = "ttp", access = "r")
   overwrite.args = list(...)
   if (length(overwrite.args) > 0L)

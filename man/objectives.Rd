@@ -5,6 +5,7 @@
 \alias{tsp}
 \alias{wtsp}
 \alias{ttp}
+\alias{wttp}
 \title{Objectives}
 \usage{
 tsp(tour, prob, packing, ...)
@@ -12,6 +13,8 @@ tsp(tour, prob, packing, ...)
 wtsp(tour, prob, packing, ...)
 
 ttp(tour, prob, packing, ...)
+
+wttp(tour, prob, packing, ...)
 }
 \arguments{
 \item{tour}{[\code{integer}]\cr
@@ -35,5 +38,6 @@ Not used at the moment.}
 \description{
 Classical Traveling Salesperson Problem (tsp),
 node-weighted TSP (wtsp) and single-objective formulation of
-the Traveling-Thief-Problem (ttp).
+the Traveling-Thief-Problem (ttp). In addition wttp returns
+the weight-related component of the TTP only; to be minimized.
 }

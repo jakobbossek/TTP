@@ -4,7 +4,7 @@
 runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutation = "swap", objective.type = "wtsp", survival.strategy = "classic", max.evals, extended.trajectory = FALSE) {
   if (is.character(instance)) {
     checkmate::assertFileExists(instance)
-    prob = load(instance)
+    prob = loadProblem(instance)
   } else {
     prob = instance
   }
@@ -13,7 +13,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
   mu = checkmate::asInt(mu)
   checkmate::assertChoice(mutation, choices = c("swap", "inversion", "jump", "scramble"))
   checkmate::assertChoice(survival.strategy, choices = c("classic", "parent"))
-  checkmate::assertChoice(objective.type, choices = c("wtsp", "ttp", "tsp"))
+  checkmate::assertChoice(objective.type, choices = c("wtsp", "ttp", "tsp", "wttp"))
   max.evals = checkmate::asInt(max.evals)
   checkmate::assertFlag(extended.trajectory)
 
@@ -21,6 +21,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     objective.type,
     "tsp"  = tsp,
     "ttp"  = ttp,
+    "wttp" = wttp,
     "wtsp" = wtsp
   ) # switch
 
@@ -51,7 +52,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
 
   n.iters = 0L
   n.evals = 0L
-  trajectory = matrix(NA, nrow = max.evals, ncol = 4)
+  trajectory = matrix(NA, nrow = max.evals, ncol = 5L)
 
   fitness = apply(tours, 1L, fitness.fun, prob = prob, packing = packing)
   best.idx = which.fun(fitness)
@@ -64,6 +65,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     trajectory[seq_len(mu), 2L] = tsp(best.tour, prob, packing)
     trajectory[seq_len(mu), 3L] = wtsp(best.tour, prob, packing)
     trajectory[seq_len(mu), 4L] = ttp(best.tour, prob, packing)
+    trajectory[seq_len(mu), 5L] = wttp(best.tour, prob, packing)
   }
 
   repeat {
@@ -102,10 +104,10 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     trajectory[n.evals, 1L] = best.fitness
 
     if (extended.trajectory) {
-
       trajectory[n.evals, 2L] = tsp(best.tour, prob, packing)
       trajectory[n.evals, 3L] = wtsp(best.tour, prob, packing)
       trajectory[n.evals, 4L] = ttp(best.tour, prob, packing)
+      trajectory[n.evals, 5L] = wttp(best.tour, prob, packing)
     }
 
     # logging
@@ -123,14 +125,14 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     trajectory = trajectory[, 1L, drop = TRUE]
   } else {
     trajectory = as.data.frame(trajectory)
-    colnames(trajectory) = c("objective", "tsp", "wtsp", "ttp")
+    colnames(trajectory) = c("objective", "tsp", "wtsp", "ttp", "wttp")
   }
 
   list(
     tour.length = best.fitness,
     tour = best.tour,
     tour.length.wtsp = wtsp(best.tour, prob, packing),
-    tour.length.ttp  = ttp(best.tour, prob, packing),
+    tour.length.wttp = wttp(best.tour, prob, packing),
     tours = tours,
     trajectory = trajectory)
 }

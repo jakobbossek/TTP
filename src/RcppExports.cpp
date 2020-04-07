@@ -51,8 +51,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ttpC
-NumericVector ttpC(IntegerVector tour, List problem, IntegerVector itemPackingPlan, NumericVector itemProfits, NumericVector itemWeights, IntegerVector itemAssignedNodes);
-RcppExport SEXP _TTP_ttpC(SEXP tourSEXP, SEXP problemSEXP, SEXP itemPackingPlanSEXP, SEXP itemProfitsSEXP, SEXP itemWeightsSEXP, SEXP itemAssignedNodesSEXP) {
+NumericVector ttpC(IntegerVector tour, List problem, IntegerVector itemPackingPlan, NumericVector itemProfits, NumericVector itemWeights, IntegerVector itemAssignedNodes, bool weightOnly);
+RcppExport SEXP _TTP_ttpC(SEXP tourSEXP, SEXP problemSEXP, SEXP itemPackingPlanSEXP, SEXP itemProfitsSEXP, SEXP itemWeightsSEXP, SEXP itemAssignedNodesSEXP, SEXP weightOnlySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,7 +62,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type itemProfits(itemProfitsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type itemWeights(itemWeightsSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type itemAssignedNodes(itemAssignedNodesSEXP);
-    rcpp_result_gen = Rcpp::wrap(ttpC(tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes));
+    Rcpp::traits::input_parameter< bool >::type weightOnly(weightOnlySEXP);
+    rcpp_result_gen = Rcpp::wrap(ttpC(tour, problem, itemPackingPlan, itemProfits, itemWeights, itemAssignedNodes, weightOnly));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -171,7 +172,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TTP_runWTSPSolverC", (DL_FUNC) &_TTP_runWTSPSolverC, 8},
     {"_TTP_tspC", (DL_FUNC) &_TTP_tspC, 2},
     {"_TTP_wtspC", (DL_FUNC) &_TTP_wtspC, 5},
-    {"_TTP_ttpC", (DL_FUNC) &_TTP_ttpC, 6},
+    {"_TTP_ttpC", (DL_FUNC) &_TTP_ttpC, 7},
     {"_TTP_monotonC", (DL_FUNC) &_TTP_monotonC, 2},
     {"_TTP_getMonotonicBlocksC", (DL_FUNC) &_TTP_getMonotonicBlocksC, 1},
     {"_TTP_shiftTourC", (DL_FUNC) &_TTP_shiftTourC, 1},

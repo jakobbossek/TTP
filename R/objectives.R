@@ -2,7 +2,8 @@
 #'
 #' @description Classical Traveling Salesperson Problem (tsp),
 #' node-weighted TSP (wtsp) and single-objective formulation of
-#' the Traveling-Thief-Problem (ttp).
+#' the Traveling-Thief-Problem (ttp). In addition wttp returns
+#' the weight-related component of the TTP only; to be minimized.
 #'
 #' @param tour [\code{integer}]\cr
 #'   Permutation of nodes.
@@ -32,5 +33,11 @@ wtsp = function(tour, prob, packing, ...) {
 #' @rdname objectives
 #' @export
 ttp = function(tour, prob, packing, ...) {
-  ttpC(tour, prob, packing, prob$items$profit, prob$items$weight, prob$items$nodenr)
+  ttpC(tour, prob, packing, prob$items$profit, prob$items$weight, prob$items$nodenr, weightOnly = FALSE)
+}
+
+#' @rdname objectives
+#' @export
+wttp = function(tour, prob, packing, ...) {
+  ttpC(tour, prob, packing, prob$items$profit, prob$items$weight, prob$items$nodenr, weightOnly = TRUE)
 }

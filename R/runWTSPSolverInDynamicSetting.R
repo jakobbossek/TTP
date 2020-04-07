@@ -49,7 +49,7 @@ runWTSPSolverInDynamicSetting = function(
   checkmate::assertFileExists(pathToInstance)
   checkmate::assertFileExists(pathToPackings)
   checkmate::assertChoice(mutation, choices = c("swap", "inversion", "jump", "scramble"))
-  checkmate::assertChoice(objective.type, choices = c("wtsp", "ttp"))
+  checkmate::assertChoice(objective.type, choices = c("wtsp", "ttp", "tsp", "wttp"))
   checkmate::assertChoice(survival.strategy, choices = c("classic", "parent"))
   mu = checkmate::asInt(mu)
   tau = checkmate::asInt(tau)

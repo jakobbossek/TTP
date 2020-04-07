@@ -108,7 +108,7 @@ NumericVector wtspC(IntegerVector tour, List problem, IntegerVector itemPackingP
 }
 
 // [[Rcpp::export]]
-NumericVector ttpC(IntegerVector tour, List problem, IntegerVector itemPackingPlan, NumericVector itemProfits, NumericVector itemWeights, IntegerVector itemAssignedNodes) {
+NumericVector ttpC(IntegerVector tour, List problem, IntegerVector itemPackingPlan, NumericVector itemProfits, NumericVector itemWeights, IntegerVector itemAssignedNodes, bool weightOnly) {
   NumericMatrix D = as<NumericMatrix>(problem["distance.matrix"]);
 
   int n = (int)(problem["n"]);
@@ -183,7 +183,11 @@ NumericVector ttpC(IntegerVector tour, List problem, IntegerVector itemPackingPl
   tl += D(rt[n - 1] - 1, rt[0] - 1) / (vmax - nu * Wxi);
 
   // final TTP value
-  tl = profit - R * tl;
+  if (weightOnly) {
+    tl = R * tl;
+  } else {
+    tl = profit - R * tl;
+  }
 
   // build output
   NumericVector tlo(1);

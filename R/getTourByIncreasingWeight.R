@@ -68,13 +68,8 @@ getTourByIncreasingWeight = function(prob, packing) {
     }
   }
 
+  #JAKOB: the next line is the simple version (no greedy approach by distance in presence of ties)
   #tour = c(1, order(wbn[-1L], decreasing = FALSE) + 1L)
-  print(tour)
-  kkk <<- tour
-  stopifnot(re::is.permutation(tour, s = 1:prob$n))
-  #print(tour)
-  #print(wbn[tour])
-
-  #tour = getTourByIncreasingWeightC(prob, packing)
+  stopifnot(re::is.permutation(tour, s = 1:n))
   return(tour)
 }
