@@ -52,6 +52,48 @@ loadProblem = function(path, ...) {
   return(meta)
 }
 
+#' @title TTP instance writer.
+#'
+#' @description Writes TTP instance to file.
+#'
+#' @param x [\code{ttp_instance}]\cr
+#'   TTP instance.
+#' @param path [\code{character(1)}]\cr
+#'   Path to file.
+#' @param overwrite [\code{logical(1)}]\cr
+#'   Should file be overwritten if it already exists?
+#'   Default is \code{FALSE}.
+#' @return [\code{invisible(TRUE)}]
+#' @export
+writeProblem = function(x, path, overwrite = FALSE, ...) {
+  checkmate::assertClass(x, "ttp_instance")
+  checkmate::assertFlag(overwrite)
+  checkmate::assertPathForOutput(path, extension = "ttp", overwrite = TRUE)
+  if (overwrite & file.exists(path))
+    unlink(path)
+
+  con = file(path, "w", encoding = "UTF-8")
+  on.exit(close(con))
+
+  header = c(
+    sprintf("PROBLEM NAME: %s", x$name),
+    sprintf("KNAPSACK DATA TYPE: %s", x$type),
+    sprintf("DIMENSION: %i", x$n),
+    sprintf("NUMBER OF ITEMS: %i", x$m),
+    sprintf("CAPACITY OF KNAPSACK: %i", x$capacity),
+    sprintf("MIN SPEED: %f", x$vmin),
+    sprintf("MAX SPEED: %f", x$vmax),
+    sprintf("RENTING RATIO: %f", x$R),
+    sprintf("EDGE_WEIGHT_TYPE: %s", x$edge_weight_type),
+    "NODE_COORD_SECTION	(INDEX, X, Y):")
+
+  writeLines(header, con = con, sep = "\n")
+  write.table(x$coordinates, file = con, quote = FALSE, row.names = TRUE, col.names = FALSE, fileEncoding = "UTF-8")
+  writeLines("ITEMS SECTION	(INDEX, PROFIT, WEIGHT, ASSIGNED NODE NUMBER):", con = con, sep = "\n")
+  write.table(x$items, file = con, quote = FALSE, row.names = TRUE, col.names = FALSE, fileEncoding = "UTF-8")
+  return(invisible(TRUE))
+}
+
 # Helper function to parse a single line in TTP file header.
 parseLine = function(line) {
   strsplit(line, split = "[[:space:]]*:[[:space:]]*")[[1L]][2L]
