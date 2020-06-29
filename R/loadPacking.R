@@ -20,3 +20,18 @@ loadPackings = function(path, which = NULL) {
   which = checkmate::asInt(which, lower = 1L, upper = nr)
   return(packings[nr, , drop = TRUE])
 }
+
+#' @title Get random packing plan
+#'
+#' @param prob [\code{ttp_instance}]\cr
+#'   TTP instance.
+#' @param p [\code{numeric}]\cr
+#'   With probability \eqn{p \in (0, 1]} each single item is packed.
+#' @return [\code{integer}] Vector in \eqn{\{0,1\}^m} where \eqn{m}
+#' is equal to \code{prob$m}.
+#' @export
+makeRandomPacking = function(prob, p) {
+  checkmate::assertClass(prob, "ttp_instance")
+  checkmate::assertNumber(p, lower = 0.000001, upper = 1)
+  rbinom(prob$m, size = 1, prob = p)
+}
