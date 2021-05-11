@@ -72,6 +72,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     # sample parent
     parent.idx = sample(seq_len(mu), size = 1L)
     parent = tours[parent.idx, ]
+    parent.fitness = fitness[parent.idx]
 
     # generate child
     child = mut.fun(parent)
@@ -82,7 +83,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
     # select best
     if (survival.strategy == "parent") {
       # very simple diversity preservation: compare with parent only
-      if (comp.fun(child.fitness, parent)) {
+      if (comp.fun(child.fitness, parent.fitness)) {
         tours[parent.idx, ] = child
         fitness[parent.idx] = child.fitness
       }
@@ -112,7 +113,7 @@ runWTSPSolverR = function(instance, packing = NULL, tours = NULL, mu = 1L, mutat
 
     # logging
     if (found.better) {
-      catf("New best value at iteration %i is %.2f\n", n.iters, trajectory[n.evals])
+      #catf("New best value at iteration %i is %.2f\n", n.iters, trajectory[n.evals])
     }
 
     # check termination condition
